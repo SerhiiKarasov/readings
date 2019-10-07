@@ -52,3 +52,21 @@ print("Longitude: "+str(citylongitude) +
 #write the output of latitude and longitude
  write-host ("Longitude: "+$stuff.coord.lon+" , "+"Latitude: "+$stuff.coord.lat)
 ```
+* 2 important libs in python for networking: paramiko and netmiko
+* netmiko example
+```python
+from netmiko import ConnectHandler
+
+device = ConnectHandler(device_type='cisco_ios', ip='192.168.255.249', username='cisco', password='cisco')
+output = device.send_command("show version")
+print (output)
+device.disconnect()
+```
+* netmiko requires platforms like 
+      * a10: A10SSH,
+      * accedian: AccedianSSH,
+      * alcatel_aos: AlcatelAosSSH,
+      * alcatel_sros: AlcatelSrosSSH,
+      * arista_eos: AristaSSH,
+      * aruba_os: ArubaSSH
+      * and many more
