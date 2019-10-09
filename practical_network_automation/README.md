@@ -68,14 +68,14 @@ output = device.send_command("show version")
 print (output)
 device.disconnect()
 ```
-* netmiko supports platforms like 
-      * a10: A10SSH,
-      * accedian: AccedianSSH,
-      * alcatel_aos: AlcatelAosSSH,
-      * alcatel_sros: AlcatelSrosSSH,
-      * arista_eos: AristaSSH,
-      * aruba_os: ArubaSSH
-      * and many more
+* netmiko supports platforms like :
+  * a10: A10SSH,
+  * accedian: AccedianSSH,
+  * alcatel_aos: AlcatelAosSSH,
+  * alcatel_sros: AlcatelSrosSSH,
+  * arista_eos: AristaSSH,
+  * aruba_os: ArubaSSH
+  * and many more
 
 * it is possilble to configure interfaces with ```config_push```:
 ```python
