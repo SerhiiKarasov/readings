@@ -53,7 +53,13 @@ print("Longitude: "+str(citylongitude) +
  write-host ("Longitude: "+$stuff.coord.lon+" , "+"Latitude: "+$stuff.coord.lat)
 ```
 * 2 important libs in python for networking: paramiko and netmiko
-* netmiko example
+* netmiko(based on paramiko):
+    * Successfully establish an SSH connection to the device
+    * Simplify the execution of show commands and the retrieval of output data
+    * Simplify execution of configuration commands including possibly commit actions
+    * Do the above across a broad set of networking vendors and platforms
+
+* netmiko example, ```send_command```
 ```python
 from netmiko import ConnectHandler
 
@@ -62,7 +68,7 @@ output = device.send_command("show version")
 print (output)
 device.disconnect()
 ```
-* netmiko requires platforms like 
+* netmiko supports platforms like 
       * a10: A10SSH,
       * accedian: AccedianSSH,
       * alcatel_aos: AlcatelAosSSH,
@@ -70,3 +76,22 @@ device.disconnect()
       * arista_eos: AristaSSH,
       * aruba_os: ArubaSSH
       * and many more
+
+* it is possilble to configure interfaces with ```config_push```:
+```python
+from netmiko import ConnectHandler
+
+print ("Before config push")
+device = ConnectHandler(device_type='cisco_ios', ip='192.168.255.249', username='cisco', password='cisco')
+output = device.send_command("show running-config interface fastEthernet 0/0")
+print (output)
+
+configcmds=["interface fastEthernet 0/0", "description my test"]
+device.send_config_set(configcmds)
+
+print ("After config push")
+output = device.send_command("show running-config interface fastEthernet 0/0")
+print (output)
+
+device.disconnect()
+```
