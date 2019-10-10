@@ -127,3 +127,7 @@ ansible servers -m shell -a "reboot"
   tasks:-name:test connection
   ping:
 ```
+    * hosts: This lists the group or managed nodes (in this case, webservers), or individual nodes separated by a space.
+    * vars: This is the declaration section where we can define variables, in a similar fashion to how we define them in any other programming language. In this case, http_port: 80 means the value of 80 is assigned to the http_port variable.
+    * tasks: This is the actual declaration section on what task needs to be performed on the group (or managed nodes) that was defined under the - hosts section.
+    * name: This denotes the remark line used to identify a particular task.
