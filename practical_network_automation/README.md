@@ -97,3 +97,11 @@ device.disconnect()
 ```
 ### Ansible
 * Ansible is an open-source software provisioning, configuration management, and application-deployment tool. It runs on many Unix-like systems, and can configure both Unix-like systems as well as Microsoft Windows. 
+* ansible components: 
+    * Inventory: This is a configuration file where you define the host information that needs to be accessed. The default file created at the time of installation is /etc/ansible/hosts.
+    * Playbook: Playbooks are simply a set of instructions that we create for Ansible to configure, deploy, and manage the nodes declared in the inventory. 
+    * Plays: Plays are defined tasks that are performed on a given set of nodes. A playbook consists of one or more plays.
+    * Tasks: Tasks are specific configured actions executed in a playbook.
+    * Variables: These are custom defined and can store values based upon execution of tasks.
+    * Roles: Roles define the hierarchy of how the playbooks can be executed. For example, say as a primary role of a web server can have sub tasks/roles to install certain application based upon server types.
+    
