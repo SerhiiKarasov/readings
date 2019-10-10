@@ -105,3 +105,25 @@ device.disconnect()
     * Variables: These are custom defined and can store values based upon execution of tasks.
     * Roles: Roles define the hierarchy of how the playbooks can be executed. For example, say as a primary role of a web server can have sub tasks/roles to install certain application based upon server types.
     
+* ansible usage example:
+```shell
+ansible myrouters -m ping -f 5
+```
+* ansible provide info on node:
+```shell
+ansible localhost -m setup |more
+```
+* run shell command on several remote machines:
+```
+ansible servers -m shell -a "reboot"
+```
+* good resource on https://learn.getgrav.org/advanced/yaml
+* example of playbook
+```shell
+-hosts:webservers
+  vars:http_port:80
+  max_clients:200
+  remote_user:root
+  tasks:-name:test connection
+  ping:
+```
