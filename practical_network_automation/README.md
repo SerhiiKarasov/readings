@@ -117,7 +117,7 @@ ansible localhost -m setup |more
 ```
 ansible servers -m shell -a "reboot"
 ```
-* good resource on https://learn.getgrav.org/advanced/yaml
+* good resource on yaml https://learn.getgrav.org/advanced/yaml
 * example of playbook
 ```shell
 -hosts:webservers
@@ -132,3 +132,59 @@ ansible servers -m shell -a "reboot"
     * tasks: This is the actual declaration section on what task needs to be performed on the group (or managed nodes) that was defined under the - hosts section.
     * name: This denotes the remark line used to identify a particular task.
 
+### Network templates
+* Step 1. Identifying SKU(stock keeping unit). S - small (0-100), M - medium (100-500), L - large(500+)
+* Step 2 – identifying the right configuration based upon the SKU. For example, for a very small SKU, the device does not need routing configuration, or for a large SKU, we need to enable BGP routing in the device.
+* Step 3 – identifying the role of the device. Let it be Loopback 99 that is an internet router.
+* For a basic template, we will use Jinja2. This is a template language extensively used in Python and Ansible and is easy to understand.
+```python
+interface Loopback 99
+description "This is switch mgmt for device {{ inventory_hostname }}"
+```
+```python
+-sh-4.2$ more checktemplate.yml
+- name: generate configs
+  hosts: all
+  gather_facts: false
+   tasks:
+     - name: Ansible config generation
+       template: 
+           src: vsmalltemplate.j2
+           dest: "{{ inventory_hostname }}.txt"
+```
+* integration with python
+```python
+-sh-4.2$ more checkpython.py
+#import libraries
+import json
+import sys
+from collections import namedtuple
+from ansible.parsing.dataloader import DataLoader
+from ansible.vars.manager import VariableManager
+from ansible.inventory.manager import InventoryManager
+from ansible.playbook.play import Play
+from ansible.executor.playbook_executor import PlaybookExecutor
+
+def ansible_part():
+    playbook_path = "checktemplate.yml"
+    inventory_path = "hosts"
+
+    Options = namedtuple('Options', ['connection', 'module_path', 'forks', 'become', 'become_method', 'become_user', 'check', 'diff', 'listhosts', 'listtasks', 'listtags', 'syntax'])
+    loader = DataLoader()
+    options = Options(connection='local', module_path='', forks=100, become=None, become_method=None, become_user=None, check=False,
+                    diff=False, listhosts=False, listtasks=False, listtags=False, syntax=False)
+    passwords = dict(vault_pass='secret')
+
+    inventory = InventoryManager(loader=loader, sources=['inventory'])
+    variable_manager = VariableManager(loader=loader, inventory=inventory)
+    executor = PlaybookExecutor( 
+                playbooks=[playbook_path], inventory=inventory, variable_manager=variable_manager, loader=loader, 
+                options=options, passwords=passwords) 
+    results = executor.run() 
+    print results
+
+def main():
+    ansible_part()
+
+sys.exit(main())
+```
