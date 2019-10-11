@@ -212,3 +212,16 @@ sys.exit(main())
     * Policy: This is configured in chef-server and defines the operations framework on a specific cookbook. The clients to be access by a specific cookbook, storage of sensitive information in a specific data bag, and the classification of registered nodes are all under the scope of the policy. There are certain key components in the policy.
     * Role: This is a combination of attributes and run-list. During the execution of a role on a node, the attributes returned from chef-client are compared to the attributes of the role. This eventually defines what particular tasks can be executed from the run-list for the specific node.
     * Run-list: This defines the exact order of the role or recipes to run for a node. If the same recipe is defined to run more than once on the same run-list, the chef-client ignores it during execution. The run-list is validated using the knife command-line tool and uploaded from the workstation where it was developed to the server.
+
+### How to use chef
+
+* Step 1 – creating the recipe. 
+```python
+easy_install_package "somepackage" do
+ action :install
+end
+```
+* Step 2 - upload the recipe.
+```python
+knife cookbook upload testcookbook
+```
