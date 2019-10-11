@@ -197,7 +197,6 @@ sys.exit(main())
      ```python
      chef generate cookbook testcookbook
      ```
-     consists of the following key components:
           * Attributes: These are the predefined system variables that contain values defined in the default.rb attributes file, located within the recipes folder in the specific cookbook (in this case, the location will be chef-repo/cookbooks/testcookbook/recipe/default.rb). These attributes can be overwritten in the cookbook itself and preference is given to cookbook attributes over the default values. 
           * Files: These are all the files under the [Cookbook]/files folder, and can be locally transferred to hosts running chef-client. Specific files can be transferred based upon host, platform version, and other client-specific attributes. Any files under [Cookbook]/files/default are available to all hosts.
           * Library: These are modules available in Chef for specific usage. Certain libraries can be directly invoked as they are available as inbuilt modules, whereas others need to be explicitly downloaded and installed based upon the requirements. These are available under the /libraries folder under the cookbook.
