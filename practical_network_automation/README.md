@@ -194,9 +194,9 @@ sys.exit(main())
 
 * The key components in Chef are as follows:
       *     Cookbook: This is similar to an Ansible role, and is written in Ruby to perform specific actions in the infrastructure (defined as creating a scenario for a specific infrastructure). As a role in Ansible, this defines the complete hierarchy and all the configuration tasks that need to be performed for each component in the hierarchy.
-     ```python
-     chef generate cookbook testcookbook
-     ```
+      ```python
+      chef generate cookbook testcookbook
+        ```
           * Attributes: These are the predefined system variables that contain values defined in the default.rb attributes file, located within the recipes folder in the specific cookbook (in this case, the location will be chef-repo/cookbooks/testcookbook/recipe/default.rb). These attributes can be overwritten in the cookbook itself and preference is given to cookbook attributes over the default values. 
           * Files: These are all the files under the [Cookbook]/files folder, and can be locally transferred to hosts running chef-client. Specific files can be transferred based upon host, platform version, and other client-specific attributes. Any files under [Cookbook]/files/default are available to all hosts.
           * Library: These are modules available in Chef for specific usage. Certain libraries can be directly invoked as they are available as inbuilt modules, whereas others need to be explicitly downloaded and installed based upon the requirements. These are available under the /libraries folder under the cookbook.
