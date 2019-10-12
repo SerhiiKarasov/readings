@@ -287,3 +287,7 @@ Based on
         *     Reinforcement learning: The system is asked to take an action and is given feedback. The system learns to perform the best possible action in certain situations based upon the feedback received.   Markov Decision Process (MDP), Q-Learning.  
         * Splunk also has some basic algorithms that can help analyze datasets that are ingested to Splunk. This is achieved through installation of the Machine Learning Toolkit (MLTK) for Splunk.  
      * Intelligent decisions  
+
+# Web frameworks
+* clients(browser , curl, programming language, external tool) communicate with web frameworks via jsons
+* web frameworks communicate with infrastructure(devices(routers), tools(splunk)) via ssh /http
