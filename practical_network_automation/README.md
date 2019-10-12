@@ -250,9 +250,10 @@ chef-client
     * Puppet Slave applies those changes shared by the catalog using Puppet Agent on the target host.
     *  Once completed, Puppet Slave sends a report back to Puppet Master to confirm the changes and current state of the slave, which is now the desired state.
 ### Comparison Chef/Ansible/Puppet
-Feature|Chef|Ansible|Puppet
-Base setup|Not easy|Easy|Not easy
-Agent needed (on client) |Yes|No|Yes
-Coding language|RubyDSL|YAML|PuppetDSL
-Redundancy|Multiple active servers|Primary/backup Servers|Multiple active servers
-Windows support|Workstation and agents|Managed nodes only|Agents
+|Feature|Chef|Ansible|Puppet|
+| ---------------------- |:--------------------------:|:--------------------------:|:--------------------------:|
+|Base setup|Not easy|Easy|Not easy|
+|Agent needed (on client) |Yes|No|Yes|
+|Coding language|RubyDSL|YAML|PuppetDSL|
+|Redundancy|Multiple active servers|Primary/backup Servers|Multiple active servers|
+|Windows support|Workstation and agents|Managed nodes only|Agents|
