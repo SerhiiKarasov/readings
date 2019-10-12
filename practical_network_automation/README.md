@@ -277,5 +277,9 @@ Based on
           *  Elasticsearch  
           *  Dropwizard  
           *  Sysdig  
-     * Machine learning
+     * Machine learning 
+        *     "Ability of machines to learn on their own without any explicit programming."  
+        *      Artificial Intelligence: This is the main framework that is of near human intelligence, or sometimes more intelligent than humans, designed to focus on a certain task or problem. An AI for a particular task can be compared to the actions that a human would take to solve that task. It can operate right from learning/predicting to even solving the particular task.  
+        *      Machine Learning: This is designed cater to human-like decision making in AI. ML acts as the layer where a machine is built to evolve on its own through data inputs and objects as per the new set of data that is provided to the machine.  
+        *      Deep Learning: This is a subset of ML that caters to large amounts of data running through algorithms to be shared with ML. This is called a Neural Network (NN), which is similar to a brain, and interconnects multiple datasets for meaningful learning of a particular task. Deep learning creates layers of abstractions to data, which results in data being parsed through all the different layers or multiple sets of algorithms to create a meaningful set of data that can be ingested by ML.  
      * Intelligent decisions
