@@ -262,13 +262,20 @@ chef-client
 *  machine starts to learn from other machines, it becomes smarter to handle complex tasks and ensure only high-level (or very complex) tasks need to be escalated to engineers.
 Based on
     * Data source. device logs like syslog, Address Resolution Protocol (ARP) table, link utilization, and, if possible, configurations.
-    * Data collector
-          * Hadoop
-          * Splunk
-          * Elasticsearch
-          * collectD
-          * StatsD
-          * Carbon
-    * Data analytics
-    * Machine learning
-    * Intelligent decisions
+    * Data collector  
+          * Hadoop  
+          * Splunk  
+          * Elasticsearch  
+          * collectD  
+          * StatsD  
+          * Carbon  
+    * Data analytics. Can be smart sql query. Can use one of the following tools for analysis:  
+          *  Splunk  
+          *  Prometheus  
+          *  Grafana  
+          *  Graphite   
+          *  Elasticsearch  
+          *  Dropwizard  
+          *  Sysdig  
+     * Machine learning
+     * Intelligent decisions
