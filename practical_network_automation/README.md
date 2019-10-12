@@ -259,3 +259,16 @@ chef-client
 |Windows support|Workstation and agents|Managed nodes only|Agents|
 
 # Using Artificial Intelligence in Operations
+*  machine starts to learn from other machines, it becomes smarter to handle complex tasks and ensure only high-level (or very complex) tasks need to be escalated to engineers.
+Based on
+    * Data source. device logs like syslog, Address Resolution Protocol (ARP) table, link utilization, and, if possible, configurations.
+    * Data collector
+          * Hadoop
+          * Splunk
+          * Elasticsearch
+          * collectD
+          * StatsD
+          * Carbon
+    * Data analytics
+    * Machine learning
+    * Intelligent decisions
