@@ -285,4 +285,5 @@ Based on
         *     Supervised learning: The system is given a set of labeled cases (training set) and asked to create a generic model on those to predict and identify patterns.  Linear regression, logistic regression, Decision Trees (DTs), Naive Bayes Classification   
         *     Unsupervised learning: The system is given a set of cases unlabeled, and asked to find a pattern in them. This is useful to identify any hidden patterns.  Clustering, neural nets  
         *     Reinforcement learning: The system is asked to take an action and is given feedback. The system learns to perform the best possible action in certain situations based upon the feedback received.   Markov Decision Process (MDP), Q-Learning.  
-     * Intelligent decisions
+        * Splunk also has some basic algorithms that can help analyze datasets that are ingested to Splunk. This is achieved through installation of the Machine Learning Toolkit (MLTK) for Splunk.  
+     * Intelligent decisions  
