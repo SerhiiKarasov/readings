@@ -257,3 +257,5 @@ chef-client
 |Coding language|RubyDSL|YAML|PuppetDSL|
 |Redundancy|Multiple active servers|Primary/backup Servers|Multiple active servers|
 |Windows support|Workstation and agents|Managed nodes only|Agents|
+
+# Using Artificial Intelligence in Operations
