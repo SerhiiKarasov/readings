@@ -143,12 +143,12 @@
 * Good Delivery Bars  is 12,4 kg, 400 oz -> more that 1.64 mln pln
 * smaller is bar -> bigger is price per gram
 * main producers of golden bars
- * Heraeus, 
- * Umicore, 
- * Pamp, 
- * Degussa,
- * Valcambi,
- * Perth Mint.
+  *  Heraeus, 
+  *  Umicore, 
+  *  Pamp, 
+  *  Degussa,
+  *  Valcambi,
+  *  Perth Mint.
 
 
 
