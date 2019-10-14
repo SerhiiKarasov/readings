@@ -292,10 +292,12 @@ Based on
 * clients(browser , curl, programming language, external tool) communicate with web frameworks via jsons
 * web frameworks communicate with infrastructure(devices(routers), tools(splunk)) via ssh /http
 ### how to use web framework
+* install apps
 ```
 pip install falcon
 pip install gunicorn
 ```
+* create base framework code
 ```python
 import falcon
 import json
@@ -311,4 +313,20 @@ class HelloWorld():
 # Handles POST requests
     def on_post(self,req,resp):
         pass
+```
+* In Falcon, the HTTP requests are mapped to respective functions, for example, GET requests are automatically mapped to the on_get() function and POST to the on_post() function.
+* Add the endpoint to call the function/class with the following code(main.py):
+```python
+# falcon.API instance , callable from Gunicorn
+app= falcon.API()
+
+# instantiate HelloWorld class
+hello= HelloWorld()
+
+# map URL to HelloWorld class
+app.add_route("/test",hello)
+```
+* Test the base API( On the location where the main.py file is located, start Gunicorn with the following command:):
+```shell
+gunicorn main:app 
 ```
