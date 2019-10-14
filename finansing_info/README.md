@@ -122,3 +122,33 @@
 
 ### debt funds
 * example  GTFI Obligacji Skarbowych
+
+
+### Gold
+* why invest in gold -> its amount is limited. 
+* 50% of gold -> in jewelry, 40 % -> in investment, banks, 10% -> in production
+* gold in jewelry is not the best investment(to big part of the price is artistic work, art etc)
+* In Poland you could invest in gold via
+  * ETFs(exchange-traded fund) without gold price reflection
+  * investment funds that are buying golds, or shares of companies from precious metals sector
+  * kontrakts on gold
+  * shares of extraction and mining companies
+  * jewelry
+  * collection coins ,numismatics
+  * bullion coins
+* measurement unit - trojan ounces(oz) 31.1035 grams
+* carat  - is a measure of gold in the metal alloy,1 carat ->0.041%,  24 carats -> 99.99%. 23 carats -> 95.80%, 22 carats - 91.60%, 18 carats -> 75%, 14 carats -> 58.3%
+* if to sell in jewelry store, lombard - they will propose bad price , no matter what metall you have. 
+* professional dealer is ok, if you have gold of good quality
+* Good Delivery Bars  is 12,4 kg, 400 oz -> more that 1.64 mln pln
+* smaller is bar -> bigger is price per gram
+* main producers of golden bars
+ * Heraeus, 
+ * Umicore, 
+ * Pamp, 
+ * Degussa,
+ * Valcambi,
+ * Perth Mint.
+
+
+
