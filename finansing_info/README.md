@@ -149,6 +149,16 @@
   *  Degussa,
   *  Valcambi,
   *  Perth Mint.
-
-
+* it is good idea to have CertiCard package
+* Bullion coins, main coins
+  *  Krugerrand(South Africa)
+  *  Maple Leaf(Canada)
+  *  American eagle
+  *  Wiener Philharmoniker(Austria)
+  *  Australian Kangaroo
+* bars vs coins - coins may cost more(per gram of gold), seems not to be valid about 1oz.
+* coins better to be kept in mint caps
+* where to buy gold: 
+   *   https://www.zlotyranking.pl/
+   *   http://www.ceny-zlota.pl/zloto/ceny-zlota-monety-1-oz
 
