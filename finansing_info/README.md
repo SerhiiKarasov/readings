@@ -161,6 +161,7 @@
 * where to buy gold: 
    *   https://www.zlotyranking.pl/
    *   http://www.ceny-zlota.pl/zloto/ceny-zlota-monety-1-oz
+   *   https://www.metalelokacyjne.pl
 
 * verification can be done via the mass spectrometer. Can be asked for check in office of some big gold dealer. 
 * coins may be verified via mint ruller
