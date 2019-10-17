@@ -331,3 +331,6 @@ app.add_route("/test",hello)
 gunicorn main:app 
 ```
 * Once initiated, the URL is callable on the local machine ashttp://localhost:8000/test. A response in the following screenshot confirms that our base API framework is up and running:
+
+### chatbot 
+* Create a workspace (or account) on Slack: https://join.slack.com/t/chatbottest-oii7277/shared_invite/enQtODAxNzI3MDIyNzU5LTdhOWVlYWZjZTg3OTY2MTc3NWEzYWU1MDU1NGNhOTE3MjAyMDYzODRjOTE1OWEyMjBkY2Q3MzFiYjA1NWYyNDA
