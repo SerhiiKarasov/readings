@@ -334,3 +334,11 @@ gunicorn main:app
 
 ### chatbot 
 * Create a workspace (or account) on Slack: https://join.slack.com/t/chatbottest-oii7277/shared_invite/enQtODAxNzI3MDIyNzU5LTdhOWVlYWZjZTg3OTY2MTc3NWEzYWU1MDU1NGNhOTE3MjAyMDYzODRjOTE1OWEyMjBkY2Q3MzFiYjA1NWYyNDA
+* create an application: https://api.slack.com/apps
+* Subscribe to Bot Events
+* add app to the workspace
+
+### chatbot api
+* Acknowledges any post sent to Slack with a response of 200 in three seconds. If this is not done, Slack reports back: endpoint not reachable.
+* Ensures any message sent from chatbot (not from any real user) is again not sent back as a reply. This can create a loop, since a message sent from a chatbot, would be treated as a new message in Slack chat and it would be sent again to URL. This would eventually make the chat unusable, causing repetitive messages on the chat.
+* Authenticates the response with a token that would be sent back to Slack to ensure the response coming to Slack is from an authenticated source.
