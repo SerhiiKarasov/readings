@@ -333,13 +333,48 @@ gunicorn main:app
 * Once initiated, the URL is callable on the local machine ashttp://localhost:8000/test. A response in the following screenshot confirms that our base API framework is up and running:
 
 ### chatbot 
-* Create a workspace (or account) on Slack: https://join.slack.com/t/chatbottest-oii7277/shared_invite/enQtODAxNzI3MDIyNzU5LTdhOWVlYWZjZTg3OTY2MTc3NWEzYWU1MDU1NGNhOTE3MjAyMDYzODRjOTE1OWEyMjBkY2Q3MzFiYjA1NWYyNDA
-* create an application: https://api.slack.com/apps
-* Subscribe to Bot Events
-* add app to the workspace
-* https://medium.com/alex-attia-blog/build-a-first-simple-slack-bot-with-python-5392ef359835
-* https://pypi.org/project/slackclient/
+# chatbot
+* code example and dependency: https://pypi.org/project/slackclient/
+* Create a workspace (or account) on Slack: https://slack.com/create
+* Create an application: https://api.slack.com/apps
+* Copy bot user oauth access token from Install app part
+* simplest example
+```python
+import slack
+
+client = slack.WebClient(token=Bot_User_OAuth_Access_Token)
+client.chat_postMessage(channel='#random',text="Hello world!")
+```
+
 ### chatbot api
 * Acknowledges any post sent to Slack with a response of 200 in three seconds. If this is not done, Slack reports back: endpoint not reachable.
 * Ensures any message sent from chatbot (not from any real user) is again not sent back as a reply. This can create a loop, since a message sent from a chatbot, would be treated as a new message in Slack chat and it would be sent again to URL. This would eventually make the chat unusable, causing repetitive messages on the chat.
 * Authenticates the response with a token that would be sent back to Slack to ensure the response coming to Slack is from an authenticated source.
+
+* how to check if ip address is a valid one:
+```python3
+import socket
+
+def validateipv4ip(address):
+    try:
+        socket.inet_aton(address)
+        print ("Correct IPv4 IP "+address)
+    except socket.error:
+        print ("wrong IPv4 IP "+address)
+
+def validateipv6ip(address):
+### for IPv6 IP address validation
+    try:
+        socket.inet_pton(socket.AF_INET6,address)
+        print ("Correct IPv6 IP "+address)
+    except socket.error:
+        print ("wrong IPv6 IP "+address)
+
+#correct IPs:
+validateipv4ip("8.8.8.8")
+validateipv6ip("2001:0db8:85a3:0000:0000:8a2e:0370:7334")
+
+#Wrong IPs:
+validateipv4ip("192.178.263.22")
+validateipv6ip("2001:0db8:85a3:0000:0000:8a2f")
+```
