@@ -128,4 +128,34 @@ name3 = 'Mary Lou';  // error: Type '"Mary Lou"' is not assignable to type '"Joh
 
 * if declare variable without initialization -> typescript will infer its type as ```any```. In javascript it would such uninitialized value is *undefined*
 * infering of the type is called *type widening*
-* 
+* Type annotations are used not only for declaring variable types, but also for declaring types of function arguments and their return values,
+### Types in function declarations
+* example of functions in javascript vs typescript
+```javascript
+//javascript
+function calcTax(state, income, dependents){
+  if(state = "NY"){
+    return income * 0.006 - dependents * 500;
+  }
+  else if(state == 'NJ'){
+    return income * 0.006 - dependents * 300;
+  }
+}
+```
+
+```typescript
+//typescript 
+function calcTax(state: string, income: number, dependents: number) : number{
+  if(state = "NY"){
+    return income * 0.006 - dependents * 500;
+  }
+  else if(state == 'NJ'){
+    return income * 0.006 - dependents * 300;
+  }
+}
+```
+### the union type
+* allow a value to be of several types
+```
+let padding: string | number;
+```
