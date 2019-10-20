@@ -115,3 +115,8 @@ const logger = () =>
   ...
 };
 ```
+
+* typescript may specify type from the 'rvalue'
+```typescript
+let name1: string = 'something';
+```
