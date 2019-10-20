@@ -159,3 +159,64 @@ function calcTax(state: string, income: number, dependents: number) : number{
 ```
 let padding: string | number;
 ```
+* check built-in type of the variable:
+```
+    if (typeof padding === "number") {
+        return Array(padding + 1).join(" ") + value;
+    }
+```
+* if the type is a custom one, need to use ```instanceof```
+```
+if (person instanceof Person) {...}
+```
+### define custome type
+* use keyword ```type``` to declare class or an interface(or use ```enum```)
+```
+type Foot = number;
+type Pound = number;
+
+
+type Patient = {
+  name: string;
+  height: Foot;
+  weight: Pound;
+}
+
+
+let patient: Patient = {
+  name: 'Joe Smith',
+  height: 5,
+  weight: 100
+}
+```
+* if during initialization to forget about one of properties(e.g. weight) typescript will complain that initialized type is not the one we are creating, some property is missing
+* it is possible to create optional properties
+```
+type Patient = {
+        name: string;
+        height: Height;
+        weight?: Weight;
+}
+
+let patient: Patient = {
+        name: 'Joe Smith',
+        height: 5
+}
+```
+* an object can have properties of any type:
+```
+type ValidatorFn = (c: FormControl) => { [key: string]: any }| null
+```
+* typescripts can declare classes, javascript cannot declare properties in class
+```
+class Person{
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+const p = new Person();
+p.firstName = "john";
+p.lastName = "Smith";
+p.age = 25;
+```
