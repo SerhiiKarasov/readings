@@ -116,7 +116,15 @@ const logger = () =>
 };
 ```
 
-* typescript may specify type from the 'rvalue'
+* typescript may specify type from the 'rvalue', hence type specification is redundant here
 ```typescript
 let name1: string = 'something';
 ```
+* it is possible to infer type/value from the literal. The variable name3 will only allow one value: John Smith and an attempt to assign another value to a variable of a literal type would result in type checker’s error:
+```typescript
+let name3: 'Name';
+name3 = 'Mary Lou';  // error: Type '"Mary Lou"' is not assignable to type '"John Smith"'
+```
+
+* if declare variable without initialization -> typescript will infer its type as ```any```
+* infering of the type is called *type widening*
