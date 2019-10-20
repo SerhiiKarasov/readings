@@ -58,7 +58,7 @@ tsc --t ES5 main
 ```
 tsc --init
 ```
-* in tsconfiguration.json it is possible to inherit configuration using extend control word
+* in tsconfiguration.json it is possible to inherit configuration using ```extends``` control word
 * REPL(Read-Evaluate-Print-Loop) executes your code in interactive console mode
 * Good to install in vscode
 TSLint - integrated the TypeScript linter,
