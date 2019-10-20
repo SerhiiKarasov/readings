@@ -126,5 +126,6 @@ let name3: 'Name';
 name3 = 'Mary Lou';  // error: Type '"Mary Lou"' is not assignable to type '"John Smith"'
 ```
 
-* if declare variable without initialization -> typescript will infer its type as ```any```
+* if declare variable without initialization -> typescript will infer its type as ```any```. In javascript it would such uninitialized value is *undefined*
 * infering of the type is called *type widening*
+* 
