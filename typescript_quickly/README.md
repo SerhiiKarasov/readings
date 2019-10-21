@@ -293,3 +293,19 @@ interface Person{
   age: number;
 }
 ```
+* if declare class with ```class``` it's instance van be used as a value or be instantiated via ```new```. While ```interface``` class is not an object, it would be just used by tpscript compiler checks, and would not be present in javascript code. 
+* if two types has the same members, they are compatible. as typescript has structural type system(not nominal)
+```
+class Person {
+        name: string;
+}
+
+class Customer {
+        name: string;
+}
+
+const cust: Customer = new Person();
+```
+of course access modifiers can influence this
+* what to choose ```type```, ```class```, ```interface```: if type doesn't need to be used for instantiating objects -> user interface, otherwirse class. For type safety use interface or type(neither is available in javascript), Interfaces cannot be used in unions or intersections(types can be used here)
+*
