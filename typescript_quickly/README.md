@@ -203,10 +203,6 @@ let patient: Patient = {
         height: 5
 }
 ```
-* an object can have properties of any type:
-```
-type ValidatorFn = (c: FormControl) => { [key: string]: any }| null
-```
 * typescripts can declare classes, javascript cannot declare properties in class
 ```
 class Person{
@@ -219,4 +215,15 @@ const p = new Person();
 p.firstName = "john";
 p.lastName = "Smith";
 p.age = 25;
+```
+
+* the type keyword for declaring a type alias to a function signature, in this case an object can have properties of any type:
+```
+type ValidatorFn = (c: FormControl) => { [key: string]: any }| null
+```
+function accepts object of FormControl, and returns either an object describing error or null.  
+```
+class FormControl {
+constructor (initialValue: string, validator: ValidatorFn | null) {...}
+}
 ```
