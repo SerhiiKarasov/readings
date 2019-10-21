@@ -264,4 +264,32 @@ const p = new Person("A", "B", 25);
 //possible but stupid, why to explicitly set type to Person if that is the const and we know the type we are setting here :)
 const p: Person = new Person("John", "Smith", 25);
 ```
-* possible to mark properties of the class as readonly
+* possible to mark properties of the class as readonly(can be initialized at declaration, or in class constructor). const cannot be used with class properties
+```typescript
+class Block {
+  readonly nonce: number;
+  readonly hash: string;
+
+  constructor (
+    readonly index: number,
+    readonly previousHash: string,
+    readonly timestamp: number,
+    readonly data: string
+  ) {
+    const { nonce, hash } = this.mine();
+    this.nonce = nonce;
+    this.hash = hash;
+  }
+  // The rest of the code is omitted for brevity
+}
+```
+### interfaces
+*  JavaScript doesn’t support interfaces but TypeScript does.
+* TypeScript includes the keywords ```interface``` and ```implements```
+```typescript
+interface Person{
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+```
