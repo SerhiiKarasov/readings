@@ -189,6 +189,13 @@ let patient: Patient = {
   weight: 100
 }
 ```
+* function examples
+```
+function myAdd(x: number, y: number): number {  return x + y; }
+let myAdd                                   = function(x: number, y: number): number { return x + y; };
+let myAdd: (x: number, y: number) => number = function(x: number, y: number): number { return x + y; };
+
+```
 * if during initialization to forget about one of properties(e.g. weight) typescript will complain that initialized type is not the one we are creating, some property is missing
 * it is possible to create optional properties
 ```
