@@ -210,19 +210,6 @@ let patient: Patient = {
         height: 5
 }
 ```
-* typescripts can declare classes, javascript cannot declare properties in class
-```
-class Person{
-  firstName: string;
-  lastName: string;
-  age: number;
-}
-
-const p = new Person();
-p.firstName = "john";
-p.lastName = "Smith";
-p.age = 25;
-```
 
 * the type keyword for declaring a type alias to a function signature, in this case an object can have properties of any type:
 ```
@@ -234,3 +221,47 @@ class FormControl {
 constructor (initialValue: string, validator: ValidatorFn | null) {...}
 }
 ```
+* typescripts can declare classes, javascript cannot declare properties in class
+```
+//typescript
+class Person{
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+
+
+//javascript
+"use strict"
+class Person{
+}
+
+//initialization is same in both cases
+const p = new Person();
+p.firstName = "john";
+p.lastName = "Smith";
+p.age = 25;
+```
+* class constuctors(allows set all properties in one line). There are level qualifiers ```public``, ```private```, ```protected```
+```typescript
+//typescript
+class Person{
+  constructor(public firstName: string, 
+              public lastName: string,
+              public age: nummber) {};
+}              
+//javascript ES6
+class Person{
+  constructor(firstName, lastName, age) {
+  this.firstName = firstName;
+  this.lastName = lastName;
+  this.age = age;
+};
+};
+
+//initialization is the same in both cases
+const p = new Person("A", "B", 25);
+//possible but stupid, why to explicitly set type to Person if that is the const and we know the type we are setting here :)
+const p: Person = new Person("John", "Smith", 25);
+```
+* possible to mark properties of the class as readonly
