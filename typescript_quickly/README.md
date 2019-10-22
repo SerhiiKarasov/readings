@@ -308,4 +308,89 @@ const cust: Customer = new Person();
 ```
 of course access modifiers can influence this
 * what to choose ```type```, ```class```, ```interface```: if type doesn't need to be used for instantiating objects -> user interface, otherwirse class. For type safety use interface or type(neither is available in javascript), Interfaces cannot be used in unions or intersections(types can be used here)
-*
+* assignable only that class that has more or same properties
+* union of custom types
+```
+export class SearchAction {
+  actionType = "SEARCH";
+
+  constructor(readonly payload: {searchQuery: string}) {}
+}
+
+export class SearchSuccessAction {
+  actionType = "SEARCH_SUCCESS";
+
+  constructor(public payload: {searchResults: string[]}) {}
+}
+
+export class SearchFailedAction {
+  actionType = "SEARCH_FAILED";
+}
+
+export type SearchActions = SearchAction | SearchSuccessAction | SearchFailedAction;
+```
+* discriminated union, in this case it is ```Shape```
+```
+interface Rectangle {
+    kind: "rectangle";
+    width: number;
+    height: number;
+}
+interface Circle {
+    kind: "circle";
+    radius: number;
+}
+
+type Shape = Rectangle | Circle;
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case "rectangle": return shape.height * shape.width;
+    case "circle": return Math.PI * shape.radius ** 2;
+  }
+}
+
+const myRectangle: Rectangle = { kind: "rectangle", width: 10, height: 20 };
+console.log(`Rectangle's area is ${area(myRectangle)}`);
+
+const myCircle: Circle = { kind: "circle", radius: 10};
+console.log(`Circle's area is ${area(myCircle)}`);
+```
+* the ```in``` guard, acts as a narrowing expression for types.
+```
+interface A { a: number };
+interface B { b: string };
+
+function foo(x: A | B) {
+    if ("a" in x) {
+        return x.a;
+    }
+    return x.b;
+}
+```
+* type ```unknown``` was introduced in TypeScript 3.0. If you declare a variable of type unknown, the compiler will force you to narrow its type down before accessing its properties. 
+* diff any vs unknown
+```
+type Person = {
+  address: string;
+}
+let person1: any;
+person1 = JSON.parse('{ "adress": "25 Broadway" }');
+console.log(person1.address);  //misspelled address, will print undefined
+```
+```
+let person2: unknown;
+person2 = JSON.parse('{ "adress": "25 Broadway" }');
+console.log(person2.address);//compilation failure, as misspelled.
+```
+* custom guards
+```
+const isPerson = (object: any): object is Person => "address" in object;
+
+if (isPerson(person2)) {
+    console.log(person2.address);
+} else {
+    console.log("person2 is not a Person");
+}
+
+const isPerson = (object: any): object is Person => !!object && "address" in object; // better as checks if object is truthy
+```
