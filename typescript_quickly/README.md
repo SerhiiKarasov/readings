@@ -702,3 +702,34 @@ class SpecialCar implements Flyable{
 }
 ```
 * Mantra: "Program to interfaces, not implementations"
+* in TypeScript, you can declare a class that implements another class,(interface would be all  public stuff)
+```
+class MockProductService implements ProductService {
+  // implementation goes here
+}
+```
+* Name conventions: We named the interface IProductService starting with the capital I, while the class name was ProductService. Some people prefer using the suffix Impl with concrete implementations, e.g. ProductServiceImpl and the interface would be simply named ProductService.
+* factory function may have part of business logic and return the proper instance based on conditions(tests, production)
+```
+function getProductService(isProduction: boolean): IProductService {
+  if (isProduction) {
+     return new ProductService();
+  } else {
+     return new MockProductService();
+  }
+}
+const productService: IProductService;
+const isProd = true;
+productService = getProductService(isProd);
+const products[] = productService.getProducts();
+```
+### Conclusion
+*  You can create a class using another one as a base. We call it class inheritance.
+* A subclass can use public or protected properties of a superclass.
+* If a class property is declared as private, it can be used only within this class.
+* You can create a class that can only instantiated once by using a private constructor.
+* If a method with the same signature exists in the superclass and a subclass, we call it method overriding. Class constructors can be overridden as well. The keyword super and the method super() allow a subclass invoke the class members of a superclass.
+* You can declare several signatures for a method, and this is called method overloading.
+* Interfaces can declare method signatures, but can’t contain their implementations.
+* You can inherit one interface from another.
+* While implementing a class, see if there are certain methods that can be declared in a separate interface. Then your class has to implement that interface. This approach provide a clean way to separate declaring the functionality from implementing it.
