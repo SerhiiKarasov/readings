@@ -601,3 +601,104 @@ console.log(prodService.getProducts(123));
 
 console.log(prodService.getProducts('blue jeans'));
 ```
+* overloading constructor
+```
+class Product {
+  id: number;
+  description: string;
+
+  constructor();
+  constructor(id: number);
+  constructor(id: number, description: string);
+  constructor(id?: number, description?: string) {
+    // Constructor implementation goes here
+  }
+}
+```
+* or similar solution using interface	
+```
+interface ProductProperties {
+    id?: number;
+    description?: string;
+}
+
+class Product {
+  id: number;
+  description: string;
+
+  constructor(properties?: ProductProperties ) {
+    // Constructor implementation goes here
+  }
+}
+```
+* interface example
+```
+interface MotorVehicle {
+    startEngine(): boolean;
+    stopEngine(): boolean;
+    brake(): boolean;
+    accelerate(speed: number);
+    honk(howLong: number): void;
+}
+class Car implements MotorVehicle {
+  startEngine(): boolean {
+    return true;
+  }
+  stopEngine(): boolean{
+    return true;
+  }
+  brake(): boolean {
+    return true;
+  }
+  accelerate(speed: number) {
+    console.log(`Driving faster`);
+  }
+
+  honk(howLong: number): void {
+    console.log(`Beep beep yeah!`);
+  }
+}
+
+const car = new Car();
+car.startEngine();
+```
+* class need to implement each and every methods from the interface
+* it is possible to set different types for the object
+```
+const car : Car = new Car();//if class Car has more methods than MotorVehicle, this object can invoke all of them
+or 
+const car : MotorVehicle = new Car();// this object can invoke only methods from the interface
+```
+* implementing several interfaces
+```
+interface Flyable {
+  fly(howHigh: number);
+  land();
+}
+
+interface Swimmable {
+  swim(howFar: number);
+}
+
+class Car implements MotorVehicle, Flyable, Swimmable {
+  // Implement all the methods from three
+  // interfaces here
+}
+or 
+class SecretServiceCar extends Car implements Flyable, Swimmable {
+  // Implement all the methods from two
+  // interfaces here
+}
+```
+* extending interfaces
+```
+interface Flyable extends MotorVehicle{
+	fly(howHigh: number);
+	land();
+}
+
+class SpecialCar implements Flyable{
+//to implement here all from MotorVehicle and all from Flyable
+}
+```
+* Mantra: "Program to interfaces, not implementations"
