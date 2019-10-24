@@ -445,3 +445,159 @@ class Person {
   const emp = new Employee();
   console.log(emp.increasePay(5));
 ```
+* better way to declare class properties:
+instead of   
+```
+class Person {
+    public firstName: string;
+    public lastName: string;
+    private age: number;
+    
+    constructor(firstName: string, lastName: string, age: number){
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.age = age;
+}
+```
+use this one   
+```
+class Person {  
+    constructor(public firstName: string, public lastName: string, public age: number){
+}
+```
+* static variables(in javascript from ES6)
+```
+class Stat {
+static stat_value = 100;
+
+use(){
+    Stat.stat_value--;
+    console.log(`value is : ${Stat.stat_value}`);
+    }
+}
+const s1 = new Stat();
+s1.use();
+const s2 = new Stat();
+s1.use();
+```
+* Static class members are not shared by subclasses. 
+* Singleton, constuctor is private, getInstance is static
+```
+class AppState {
+    counter = 0;
+    private static instanceRef: AppState;
+    private constructor(){}
+    static getInstance(): AppState{
+        if (AppState.instanceRef === undefined){
+            AppState.instanceRef = new AppState();
+        }
+        return AppState.instanceRef;
+    }
+}
+
+const appState1 = AppState.getInstance();
+const appState2 = AppState.getInstance();
+```
+* method```super()``` and keyword ```super``` need to specify from whom the method would be called(superclass or subclass)
+* If both the superclass and the subclass have constructors, the one from the subclass must invoke the constructor of the superclass using the method super() as seen in listing 3.3.
+```
+class Person {
+	constructor(public firstName: string, public lastName: string, private age: number) {}
+}
+
+class Employee extends Person {
+	constructor(firstName: string, lastName: string, age: number, public department: string) {
+		super(firstName, lastName, age);
+	}
+}
+const emp = new Employee('Joe', 'Smith', 29, 'Accounting');
+```
+*  If a method in a subclass wants to invoke a method with the same name defined in the superclass, it needs to use keyword super instead of this when referencing the superclass method.
+* abstract classes. Class that cannot be instantiated. Still class can include methods that are implemented, as well as only declared methods. 
+```
+abstract class Person {
+	constructor(public name: string) {}
+
+	changeAddress(newAddress: string) {
+		console.log(`changeAddress ${newAddress}`);
+	}
+	giveDayOff() {
+		console.log(`giveDayOff`);
+	}
+
+	promote(percent: number) {
+		this.giveDayOff();
+		this.increasePay(percent);
+		console.log(`promote ${percent}`);
+	}
+
+	abstract increasePay(percent: number);
+}
+
+class Employee extends Person{
+    increasePay(percent: number){
+        console.log(`Increasing the salary of ${this.name} by ${percent}%`);
+    }
+}
+
+class Contractor extends Person{
+    increasePay(percent: number){
+        console.log(`Increasing the hourly rate of ${this.name} by ${percent}%`);    }
+}
+
+
+const workers: Person[] = [];
+workers[0] = new Employee('John');
+workers[1] = new Contractor('Mary');
+workers.forEach(worker => worker.promote(5));
+```
+* Since the descendants of Person don’t declare their own constructors, the constructor of the ancestor will be invoked automatically when we instantiate Employee and Contractor. If any of the descendants declared its own constructor, we’d have to use super() to ensure that the constructor of the Person is invoked.
+* how to overload method:
+    * arguments
+```
+class ProductService {
+    getProducts();
+    getProducts(id: number);
+    getProducts(id?: number) {
+        if (typeof id === 'number') {
+          console.log(`Getting the product info for ${id}`);
+        } else {
+          console.log(`Getting all products`);
+        }
+    }
+}
+const prodService = new ProductService();
+prodService.getProducts(123);
+prodService.getProducts();
+```
+   * arguments and return type
+```
+interface Product {
+  id: number;
+  description: string;
+}
+
+class ProductService {
+
+    getProducts(description: string): Product[];
+    getProducts(id: number): Product;
+    getProducts(product: number | string): Product[] | Product{
+        if (typeof product === "number") {
+          console.log(`Getting the product info for id ${product}`);
+                    return { id: product, description: 'great product' };
+        } else if (typeof product === "string") {
+          console.log(`Getting product with description ${product}`);
+          return [{ id: 123, description: 'blue jeans' },
+                  { id: 789, description: 'blue jeans' }];
+        } else {
+           return null;
+        }
+    }
+}
+
+const prodService = new ProductService();
+
+console.log(prodService.getProducts(123));
+
+console.log(prodService.getProducts('blue jeans'));
+```
