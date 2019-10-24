@@ -394,3 +394,54 @@ if (isPerson(person2)) {
 
 const isPerson = (object: any): object is Person => !!object && "address" in object; // better as checks if object is truthy
 ```
+#  3.1  Working with classes 
+* inheritance
+```typescript
+class Person {
+  firstName: string;
+  lastName: string;
+  age: number;
+  
+  sayHello(): string{
+    return `My name is ${this.firstName} ${this.secondName}`;
+}
+
+class Employee extends Person {
+  department: string;
+}
+
+const emp = new Employee();
+```
+* 
+
+Under the hood, JavaScript supports prototypal object-based inheritance, where one object can be assigned to another object as its prototype, and this happens during the runtime. During transpiling TypeScript to JavaScript, the generated code uses the syntax of the prototypal inheritance.
+* if a method(s) is declared in a superclass, it will be inherited by the subclass unless the method was declared with the access qualified private
+* publick methods or properties can be accessed internally by class or externally from other classes, scripts
+* public is a default access modifier.
+* Class members marked as protected can be accessed either from the internal class code or from class descendants.
+* in javascript private, protected, publick keywords are absent, they are only for a convinience during development.
+```
+class Person {
+    public firstName: string;
+    public lastName: string;
+    private age: number;
+    
+    protected sayHello(): string{
+      return `My name is ${this.firstName} ${this.lastName}`;
+  }
+  
+  class Employee extends Person {
+    department: string;
+    
+    reviewPerformance(): void{
+      this.sayHello();
+      this.increasePay(5);
+    }
+    increasePay(percent: number): void{
+    //   return percent*1000* 0.22 * this.age();//it will not compile as age is 
+    }
+  }
+  
+  const emp = new Employee();
+  console.log(emp.increasePay(5));
+```
