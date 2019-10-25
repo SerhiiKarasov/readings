@@ -733,3 +733,46 @@ const products[] = productService.getProducts();
 * Interfaces can declare method signatures, but can’t contain their implementations.
 * You can inherit one interface from another.
 * While implementing a class, see if there are certain methods that can be declared in a separate interface. Then your class has to implement that interface. This approach provide a clean way to separate declaring the functionality from implementing it.
+
+# 4. enums
+* by default starts with zero, possible to set the first value, all other would be calculated automatically
+```
+enum Weekdays {
+  Monday = 1,
+  Tuesday = 2,
+  Wednesday = 3,
+  Thursday = 4,
+  Friday = 5,
+  Saturday = 6,
+  Sunday = 7
+}
+let dayOff = Weekdays.Tuesday;
+
+console.log(Weekdays[3])
+```
+* string enums
+```
+enum Direction {
+    Up = "UP",
+    Down = "DOWN",
+    Left = "LEFT",
+    Right = "RIGHT",
+}
+```
+* Redux framework(state machine) requires apps to emit state, good to be done via enums
+* String enums are not reversible, and you can’t find the member’s name if you know its value.
+* const enum in js is just a variable(not a function like the simple enum), hence cannot run search of member by value.
+
+### 4.2  Generics
+* TypeScript generics allow to write a function that can work with a variety of types. In other words, you can declare a function that works with a generic type(s), and the concrete type(s) can be specified later by the caller of this function.
+```
+let lotteryNumbers: Array<number>;
+```
+*  Specify the type of the array element followed by []:
+```
+const someValues: number[];
+```
+* Use a generic Array followed by the type parameter in angle brackets:
+```
+const someValues: Array<number>;
+```
