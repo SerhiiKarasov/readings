@@ -776,3 +776,24 @@ const someValues: number[];
 ```
 const someValues: Array<number>;
 ```
+* in typescript,it is possible to add to array objects that have properties in common with the mentioned type
+```
+class Person {
+    name: string;
+}
+
+class Employee extends Person {
+    department: number;
+}
+
+class Animal {
+    name: string;
+    breed: string;
+}
+
+const workers: Array<Person> = [];
+
+workers[0] = new Person();
+workers[1] = new Employee();
+workers[2] = new Animal();  // no errors
+```
