@@ -797,3 +797,10 @@ workers[0] = new Person();
 workers[1] = new Employee();
 workers[2] = new Animal();  // no errors
 ```
+* When all elements of the array have the same type, use the syntax as in declaration of values1 - it’s just easier to read and write. But if an array can store elements of different types, you can use generics to restrict the types allowed in the array. 
+```
+const values1: string[] = ["Mary", "Joe"];
+const values2: Array<string> = ["Mary", "Joe"];
+const values4: Array<string | number> = ["Joe", 123, 567]; // no errors
+```
+* 4.2.2  Creating your own generic types
