@@ -939,3 +939,9 @@ const numArgFunc: numFunc<number> = (someValue: number) => (multiplier: number) 
 const stringArgFunc: numFunc<string> = (someText: string) => (padding: number) => someText.length + padding;
 const createSumString: numFunc<number> = () => (x: number) => 'Hello';
 ```
+#  5 Decorators and advanced types
+* a decorator is "a special kind of declaration that can be attached to a class declaration, method, accessor, property, or parameter. Decorators use the form @expression, where expression must evaluate to a function that will be called at runtime with information about the decorated declaration."
+* Say you have class A {…} and there is a magic decorator called @Injectable() that knows how to instantiate classes and inject their instances into other objects.
+```
+@Injectable() class A {}
+```
