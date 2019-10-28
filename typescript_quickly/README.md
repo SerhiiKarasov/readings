@@ -804,3 +804,138 @@ const values2: Array<string> = ["Mary", "Joe"];
 const values4: Array<string | number> = ["Joe", 123, 567]; // no errors
 ```
 * 4.2.2  Creating your own generic types
+* programming to interfaces you think differently: "Today, I need to compare rectangles, and tomorrow they’ll ask me to compare other objects. Let me play smart and declare an interface with a function compare(). Then the class Rectangle as well as any other class in the future can implement this interface. The algorithms for comparing rectangles will be different than comparing, say, triangles, but at least they’ll have something in common and the method signature of compareTo() will look the same".
+```
+//bad use case, as can be used the unexpected type
+interface Comparator {
+  compareTo(value: any): number;
+}
+
+class Rectangle implements Comparator {
+
+  compareTo(value: any): number {
+    // the algorithm of comparing rectangles goes here
+  }
+}
+
+class Triangle implements Comparator {
+
+  compareTo(value: any): number {
+    // the algorithm of comparing triangles goes here
+  }
+}
+```
+
+```
+//good example of generic usage
+
+interface Comparator<T> {
+  compareTo(value: T): number;
+}
+
+class Rectangle implements Comparator<Rectangle>{
+  compareTo(value: Rectangle): number {
+    // the algorithm of comparing rectangles goes here
+  }
+}
+
+class Triangle implements Comparator<Triangle>{
+  compareTo(value: Triangle): number {
+    // the algorithm of comparing rectangles goes here
+  }
+}
+
+rectangle1.compareTo(triangle1);//typescript will report problem
+rectangle1.compareTo(rectangle2); //good!!!
+```
+* default values of generic types
+```
+class A <T>{
+	value: T;
+}
+
+class B extends A{//!!!!!!!!!!!transpile error
+}
+class C extends A<any>{
+}
+```
+ * or
+```
+class A <T = any>{
+	value: T;
+}
+//or 
+class A < T = {} >{
+}
+class B extends A{
+}
+```
+*  4.2.3  Creating generic functions
+```
+function printMe<T> (content: T): T {
+    console.log(content);
+    return content;
+}
+
+
+const printMe = <T> (content: T): T => {
+    console.log(content);
+    return content;
+}
+
+const a = printMe("Hello");
+
+class Person{
+  constructor(public name: string) { }
+}
+
+const b = printMe(new Person("Joe")); 
+```
+* comparison with generic pair
+```
+class Pair<K, V> {
+  constructor(public key: K, public value: V) {}
+}
+
+function compare <K,V> (pair1: Pair<K,V>, pair2: Pair<K,V>): boolean {
+    return pair1.key === pair2.key &&
+           pair1.value === pair2.value;
+}
+
+let p1: Pair<number, string> = new Pair(1, "Apple");
+
+let p2 = new Pair(1, "Orange");
+
+// Comparing apples to oranges
+console.log(compare<number, string>(p1, p2));
+
+let p3 = new Pair("first", "Apple");
+
+let p4 = new Pair("first", "Apple");
+
+// Comparing apples to apples
+console.log(compare(p3, p4));
+```
+* If a function can receive a function as argument or return another function, we call it a higher order function.
+* higher order function that returns function with signature ```(c: number) => number```
+```
+(someValue: number) => (multiplier: number) => someValue * multiplier;
+```
+```
+const outerFunct = (someValue: number) => (multiplier: number) => someValue * multiplier;
+const innerFunct = outerFunct(10);
+let result = innerFunc(5);
+console.log(result)
+```
+*  
+Let’s start with declaring the generic function that can take a generic type T but returns the function (c: number) ⇒ number:
+
+```
+type numFunc<T> = (arg: T) => (c: number) => number;
+```
+```
+const noArgFunc: numFunc<void> = () => (c: number) => c + 5;
+const numArgFunc: numFunc<number> = (someValue: number) => (multiplier: number) => someValue * multiplier;
+const stringArgFunc: numFunc<string> = (someText: string) => (padding: number) => someText.length + padding;
+const createSumString: numFunc<number> = () => (x: number) => 'Hello';
+```
