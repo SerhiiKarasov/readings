@@ -945,3 +945,96 @@ const createSumString: numFunc<number> = () => (x: number) => 'Hello';
 ```
 @Injectable() class A {}
 ```
+* Angular framework decorator(a built-in decorator @Component() for the class and @Input() for the property )
+```
+@Component({
+	selector: 'order-processor',
+	template: 'Buying {{quantity}} items'
+})
+export class OrderComponent{
+	@Input() quantity: number;
+}
+```
+* TypeScript doesn’t come with any built-in decorators, but you can create your own or use the ones provided by the framework or a library of your choice.
+* in order to use decorators in ts:
+```
+--experimentalDecorators
+```
+```
+"experimentalDecorators": true
+```
+### class decorator
+* A class decorator is applied to the class, and the decorator function is executed when the constructor executes. The class decorator requires one parameter - a constructor function for the class.
+```
+function whoAmI (target: Function): void{
+	console.log(`You are : \n ${target}`)
+}
+
+
+@whoAmI
+class Friend {
+	constructor (private name: string, private age: number){}
+}
+```
+* In JavaScript, a mixin is a class that implements a certain behavior.Mixins are not meant to be used alone, but their behavior can be added to other classes. While JavaScript doesn’t support multiple inheritance, you can compose behaviors from multiple classes using mixins.
+```
+type constructorMixin = { new(...args: any[]): {} };
+
+function <T extends constructorMixin> (target: T) {
+   // the decorator is implemented here
+}
+```
+* We want to create a decorator, that can accept a salutation parameter, and add to the class a new property message concatenating the given salutation and name. Also, we want to replace the code of the method sayHello() to print the message.
+```
+function useSalutation(salutation: string) {
+  return function <T extends constructorMixin> (target: T) {
+    return class extends target {
+     name: string;
+     private message = 'Hello ' + salutation + this.name;
+
+     sayHello(){console.log(`${this.message}`);}
+    }
+  }
+}
+
+@useSalutation("Mr. ")
+class Greeter {
+
+  constructor(public name: string) { }
+  sayHello() { console.log(`Hello ${this.name} `) }
+}
+
+const grt = new Greeter('Smith');
+grt.sayHello();
+
+```
+### method decorator
+* add logger for every function call
+```
+function logTrade(target, key, descriptor) {
+
+    const originalCode = descriptor.value;
+
+    descriptor.value = function () {
+
+      console.log(`Invoked ${key} providing:`, arguments);
+      return originalCode.apply(this, arguments);
+    };
+
+   return descriptor;
+}
+
+class Trade {
+  @logTrade
+  placeOrder(stockName: string, quantity: number, operation: string, traderID: number) {
+
+     // the method implementation goes here
+    }
+  // other methods go here
+}
+
+
+
+const trade = new Trade();
+trade.placeOrder('IBM', 100, 'Buy', 123);
+```
