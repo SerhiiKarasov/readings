@@ -1038,3 +1038,21 @@ class Trade {
 const trade = new Trade();
 trade.placeOrder('IBM', 100, 'Buy', 123);
 ```
+* readonly mapped types
+```
+interface Person {
+  name: string;
+  age: number;
+}
+
+interface ReadonlyPerson {
+  readonly name: string;
+  readonly age: number;
+}
+const worker: Person = {name: "John", age: 22};
+
+function doStuff(person: Readonly<Person>) {
+
+    person.age = 25;
+}
+```
