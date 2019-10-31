@@ -1086,11 +1086,32 @@ interface Person{
 ```
 * keyof usage
 ```
-function filterBy<T, P extends keyof T>(
-    property: P,
-    value: T[P],
-    array: T[]) {
-
-    return array.filter(item => item[property] === value);
+	function filterBy<T, P extends keyof T>(
+	    property: P,
+	    value: T[P],
+	    array: T[]) {
+	    return array.filter(item => item[property] === value);
+	}
+```
+* creating opposite to Readonly -> Modifiable:
+```
+type Modifiable<T> = {
+	-readonly[P in keyof T]: T[P];
 }
+
+```
+* The minus sign in front of the readonly qualifier removes it from all properties of the given type.
+```
+interface Person {
+  readonly name: string;
+  readonly age: number;
+}
+
+const worker1: Person = {name: "John", age: 25};
+
+worker1.age = 27;
+
+const worker2: Modifiable<Person> = {name: "John", age: 25};
+
+worker2.age = 27;
 ```
