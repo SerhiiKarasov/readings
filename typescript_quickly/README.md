@@ -1147,4 +1147,28 @@ type PersonNameAddress<T, K> = Pick<Person, 'name'|'address'>;
 function getProducts<T>(id?: T):
   T extends number ? Product : Product[]
 ```
-* type that excludes types that are assignable
+* type that excludes types that are assignable to U
+```
+type Exclude<T, U> = T extends U ? never : T;
+```
+* type will contain all the properties of T except those that belong to the given type K.
+```
+type RemoveProps<T, K> = Exclude<keyof T, K>;
+```
+### the keyword infer
+* todo: replace return types with another ones.e.g. wrap it with Promise.
+```
+interface SyncService {
+    baseUrl: string;
+    getA(): string;
+}
+```
+```
+class AsyncService implements Promisify<SyncService> {
+    baseUrl: string;
+
+    getA(): Promise<string> {
+        return Promise.resolve('');
+    }
+```
+
