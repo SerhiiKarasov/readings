@@ -1083,5 +1083,14 @@ interface Person{
 	readonly name: string;
 	readonly age: number;
 }
-	
+```
+* keyof usage
+```
+function filterBy<T, P extends keyof T>(
+    property: P,
+    value: T[P],
+    array: T[]) {
+
+    return array.filter(item => item[property] === value);
+}
 ```
