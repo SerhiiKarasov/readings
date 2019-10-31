@@ -1147,3 +1147,4 @@ type PersonNameAddress<T, K> = Pick<Person, 'name'|'address'>;
 function getProducts<T>(id?: T):
   T extends number ? Product : Product[]
 ```
+* type that excludes types that are assignable
