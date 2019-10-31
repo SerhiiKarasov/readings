@@ -1071,8 +1071,8 @@ type Readonly<T> = {
 type propNames = keyof Person; //i.e. "name"|"age"
 ```
 * The keyof type query can be used only in type declarations.
-* Readonly<T>
-```
+* Readonly \<T\>
+```typescript 
 interface Person{
 	name: string;
 	age: number;
@@ -1114,4 +1114,36 @@ worker1.age = 27;
 const worker2: Modifiable<Person> = {name: "John", age: 25};
 
 worker2.age = 27;
+```
+
+* creating a type with all properties optional(with question mark at the end):
+```
+type Partial<T> = {
+	[P in keyof T]?: T[P];
+}
+```
+* creating a type with all properties mandatory
+```
+type Required<T> = {
+	[P in keyof T]-?: T[P];
+}
+```
+* create a type from properties of another type
+```
+type Pick<T, K extends keyof T> {
+	[P in K] : T[P];
+}
+
+interface Person {
+	name: string;
+	age: number;
+	address: string; 
+}
+
+type PersonNameAddress<T, K> = Pick<Person, 'name'|'address'>;
+```
+* function that returns different types based on condition
+```
+function getProducts<T>(id?: T):
+  T extends number ? Product : Product[]
 ```
