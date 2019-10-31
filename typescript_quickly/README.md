@@ -1049,10 +1049,39 @@ interface ReadonlyPerson {
   readonly name: string;
   readonly age: number;
 }
+const worker: ReadonlyPerson = {name: "John", age: 22};
+//or
 const worker: Person = {name: "John", age: 22};
 
 function doStuff(person: Readonly<Person>) {
 
     person.age = 25;
 }
+```
+### keyof and a lookup type. index type query keyof and a lookup type.
+* Readonly declaration in lib.es5.d.ts
+```
+type Readonly<T> = {
+  readonly [P in keyof T]: T[P];
+};
+```
+* Usually, the letter T in generics represents type, K - key, V - value, P - property et al.
+* keyof is called index type query, and it represents a union of allowed property names (the keys) of the given type. If the type Person would be our T, then keyof T would represent the union of name and age. 
+```
+type propNames = keyof Person; //i.e. "name"|"age"
+```
+* The keyof type query can be used only in type declarations.
+* Readonly<T>
+```
+interface Person{
+	name: string;
+	age: number;
+}
+
+Readonly<Person>// will create smth like: 
+interface Person{
+	readonly name: string;
+	readonly age: number;
+}
+	
 ```
