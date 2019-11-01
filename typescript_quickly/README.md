@@ -1171,4 +1171,5 @@ class AsyncService implements Promisify<SyncService> {
         return Promise.resolve('');
     }
 ```
-
+# 6 Tooling
+* When you install TypeScript, its bin directory includes two files: tsc and tsserver. The latter is the TypeScript Language Service that IDEs use to support these productivity features. When you type the TypeScript code, the IDEs communicate with tsserver that compiles the code in memory
