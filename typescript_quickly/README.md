@@ -1156,6 +1156,12 @@ type Exclude<T, U> = T extends U ? never : T;
 type RemoveProps<T, K> = Exclude<keyof T, K>;
 ```
 ### the keyword infer
+* Within the extends clause of a conditional type, it is now possible to have infer declarations that introduce a type variable to be inferred. Such inferred type variables may be referenced in the true branch of the conditional type. It is possible to have multiple infer locations for the same type variable.
+
+For example, the following extracts the return type of a function type:
+```
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
+```
 * todo: replace return types with another ones.e.g. wrap it with Promise.
 ```
 interface SyncService {
@@ -1173,6 +1179,7 @@ class AsyncService implements Promisify<SyncService> {
 ```
 # 6 Tooling
 * When you install TypeScript, its bin directory includes two files: tsc and tsserver. The latter is the TypeScript Language Service that IDEs use to support these productivity features. When you type the TypeScript code, the IDEs communicate with tsserver that compiles the code in memory
+### Source maps
 * Source map files have extensions .map, and they contain json-formatted data that map the corresponding code fragments in the generated JavaScript to the original language, which in our case is TypeScript.
 ```
 tsc greeter.ts --sourceMap true
@@ -1193,3 +1200,25 @@ npm install -g live-server
 ```
 Settings -> more tools -> developer tools -> sources -> put a breakpoint in ts file ->F5
 ```
+### The linter TSLint
+* create a new folder and run here
+```
+npm init -y
+```
+* install typescript and tslint in the folder
+```
+npm install typescript tslint
+```
+* create configuration for tslint
+```
+./node_modules/.bin/tslint --init
+```
+* or use similar tool that runs local binaries by default from node_modules
+```
+npx tslint --init
+```
+* default rules
+```
+node_modules/tslint/lib/configs/recommended.js
+```
+### Bundling code with Webpack
