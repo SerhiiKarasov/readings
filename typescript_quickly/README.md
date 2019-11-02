@@ -1173,3 +1173,23 @@ class AsyncService implements Promisify<SyncService> {
 ```
 # 6 Tooling
 * When you install TypeScript, its bin directory includes two files: tsc and tsserver. The latter is the TypeScript Language Service that IDEs use to support these productivity features. When you type the TypeScript code, the IDEs communicate with tsserver that compiles the code in memory
+* Source map files have extensions .map, and they contain json-formatted data that map the corresponding code fragments in the generated JavaScript to the original language, which in our case is TypeScript.
+```
+tsc greeter.ts --sourceMap true
+//
+tsc greeter.ts --sourceMap true --inlineSources true // With this option, the .js.map file will also include the TypeScript source code of your app
+```
+```
+<!DOCTYPE html>
+<html>
+  <body>
+    <script src="greeter.js"/>
+  </body>
+</html>
+```
+```
+npm install -g live-server
+```
+```
+Settings -> more tools -> developer tools -> sources -> put a breakpoint in ts file ->F5
+```
