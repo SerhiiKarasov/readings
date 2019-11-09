@@ -165,3 +165,7 @@
 
 * verification can be done via the mass spectrometer. Can be asked for check in office of some big gold dealer. 
 * coins may be verified via mint ruller
+
+### how to control your spendings
+1) set priorities 
+2) measure what priorities you have at the moment
