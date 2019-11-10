@@ -1222,3 +1222,17 @@ npx tslint --init
 node_modules/tslint/lib/configs/recommended.js
 ```
 ### Bundling code with Webpack
+```
+npm install webpack webpack-cli -g
+```
+create a project
+```
+.:
+package.json  package-lock.json  src  webpack.config.js
+
+./src:
+index.js
+```
+```
+npm install
+```
