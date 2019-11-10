@@ -1221,7 +1221,7 @@ npx tslint --init
 ```
 node_modules/tslint/lib/configs/recommended.js
 ```
-### Bundling code with Webpack
+### Bundling js code with Webpack
 ```
 npm install webpack webpack-cli -g
 ```
@@ -1238,4 +1238,19 @@ npm install
 ```
 ```
 npm run bundleup
+```
+```
+node dist/index.bundle.js
+# or
+npm install webpack-dev-server -D
+```
+### Bundling js code with Webpack
+package.json(ts-loader -> transplit ts to js)
+```
+"devDependencies": {
+    "ts-loader": "^5.3.2",
+    "typescript": "^3.2.2",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.1.2"
+}
 ```
