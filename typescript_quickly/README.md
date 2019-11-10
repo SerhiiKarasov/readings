@@ -1236,3 +1236,6 @@ index.js
 ```
 npm install
 ```
+```
+npm run bundleup
+```
