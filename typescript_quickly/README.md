@@ -1254,3 +1254,5 @@ package.json(ts-loader -> transplit ts to js)
     "webpack-cli": "^3.1.2"
 }
 ```
+### Babel
+Babel is a free and open-source JavaScript compiler that is mainly used to convert ECMAScript 2015+ (ES6+) code into a backwards compatible version of JavaScript that can be run by older JavaScript engines. Babel is popular tool for using the newest features of the JavaScript programming language.
