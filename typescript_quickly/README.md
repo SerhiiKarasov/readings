@@ -1256,3 +1256,8 @@ package.json(ts-loader -> transplit ts to js)
 ```
 ### Babel
 Babel is a free and open-source JavaScript compiler that is mainly used to convert ECMAScript 2015+ (ES6+) code into a backwards compatible version of JavaScript that can be run by older JavaScript engines. Babel is popular tool for using the newest features of the JavaScript programming language.
+### Deno
+a secure run-time environment that’s built on top of the V8 engine (just like Node) and has a built-in TypeScript compiler.
+
+### ncc
+It’s a command line interface for compiling a Node.js module into a single file, together with all its dependencies. This tool can be used by TypeScript developers who write the apps that run on the server side.
