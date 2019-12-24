@@ -1261,3 +1261,34 @@ a secure run-time environment that’s built on top of the V8 engine (just like 
 
 ### ncc
 It’s a command line interface for compiling a Node.js module into a single file, together with all its dependencies. This tool can be used by TypeScript developers who write the apps that run on the server side.
+
+
+# 7 Using Typescript and Javascript together
+### type definition files
+The purpose of type definition files is to let the TypeScript compiler know the types expected by the APIs of a specific JavaScript library. Type definition files just include the names of the variables (with types) and function signatures (with types) used by a particular JavaScript library
+* The suffix of any definition filename is d.ts, and you can find these files for more than 6000 JavaScript libraries at www.npmjs.com/~types. 
+* how to install javascript types(e.g. types for js ajax):
+```
+npm install @types/jquery -D
+```
+* type definition files are for: use the existing JavaScript libraries while enjoying the benefits of a strongly-typed language.
+### shims
+* A shim is a library that intercepts API calls and transforms the code so the old environment (e.g. IE 11) can support newer API (e.g. ES6). Example
+```
+npm install @types/es6-shim -D
+```
+### Creating your own type definition files
+* js hello.js
+```
+function greeting(name){
+	console.log("hello " + name);
+}
+```
+* file ./src/typings.d.ts
+```
+declare function greeting(name: string): void;
+```
+* reference directive on top of your ts file that uses function
+```
+///<reference path="src/typings.d.ts" />
+```
