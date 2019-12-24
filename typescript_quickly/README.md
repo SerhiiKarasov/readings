@@ -68,7 +68,7 @@ Path Intellisense - auto-completes file paths.
 
 
 
-#  2 Basic and custom types
+#  2. Basic and custom types
 * The type can be assigned to a variable either explicitly by a software developer or implicitly (a.k.a. inferred types) 
 ## 2.1.1  Basic type annotations
 * add a colon and a type annotation to specify the variable type
@@ -242,7 +242,7 @@ p.firstName = "john";
 p.lastName = "Smith";
 p.age = 25;
 ```
-* class constuctors(allows set all properties in one line). There are level qualifiers ```public``, ```private```, ```protected```
+* class constructors(allows set all properties in one line). There are level qualifiers ```public``, ```private```, ```protected```
 ```typescript
 //typescript
 class Person{
@@ -394,7 +394,8 @@ if (isPerson(person2)) {
 
 const isPerson = (object: any): object is Person => !!object && "address" in object; // better as checks if object is truthy
 ```
-#  3.1  Working with classes 
+# 3. Object-oriented programming with classes and interfaces. 
+##  3.1  Working with classes 
 * inheritance
 ```typescript
 class Person {
@@ -734,7 +735,7 @@ const products[] = productService.getProducts();
 * You can inherit one interface from another.
 * While implementing a class, see if there are certain methods that can be declared in a separate interface. Then your class has to implement that interface. This approach provide a clean way to separate declaring the functionality from implementing it.
 
-# 4. enums
+# 4. Enums and generics
 * by default starts with zero, possible to set the first value, all other would be calculated automatically
 ```
 enum Weekdays {
@@ -939,7 +940,7 @@ const numArgFunc: numFunc<number> = (someValue: number) => (multiplier: number) 
 const stringArgFunc: numFunc<string> = (someText: string) => (padding: number) => someText.length + padding;
 const createSumString: numFunc<number> = () => (x: number) => 'Hello';
 ```
-#  5 Decorators and advanced types
+#  5. Decorators and advanced types
 * a decorator is "a special kind of declaration that can be attached to a class declaration, method, accessor, property, or parameter. Decorators use the form @expression, where expression must evaluate to a function that will be called at runtime with information about the decorated declaration."
 * Say you have class A {…} and there is a magic decorator called @Injectable() that knows how to instantiate classes and inject their instances into other objects.
 ```
@@ -1177,7 +1178,7 @@ class AsyncService implements Promisify<SyncService> {
         return Promise.resolve('');
     }
 ```
-# 6 Tooling
+# 6. Tooling
 * When you install TypeScript, its bin directory includes two files: tsc and tsserver. The latter is the TypeScript Language Service that IDEs use to support these productivity features. When you type the TypeScript code, the IDEs communicate with tsserver that compiles the code in memory
 ### Source maps
 * Source map files have extensions .map, and they contain json-formatted data that map the corresponding code fragments in the generated JavaScript to the original language, which in our case is TypeScript.
