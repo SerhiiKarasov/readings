@@ -1292,3 +1292,25 @@ declare function greeting(name: string): void;
 ```
 ///<reference path="src/typings.d.ts" />
 ```
+## Introducing TypeScript in your JavaScript project
+* write ts code even in js, but add in ts conf
+```
+ "allowJs": true.
+```
+* when code is ready, opt in to type checking by adding the tsc compiler’s option 
+```
+"checkJs": true
+```
+* ignore separate places in JS code
+```
+//@ts-ignore 
+```
+* the static type analyzer can check JS code for validity
+```
+//@ts-check 
+```
+* if tsc cannot infer the variable type based on how it’s used, the compiler silently defaults the type to any
+```
+"noImplicitAny": false 
+```
+* to help tsc with type inference add the JSDoc annotations (e.g. @param, @return)
