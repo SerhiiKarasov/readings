@@ -1315,3 +1315,6 @@ declare function greeting(name: string): void;
 "noImplicitAny": false 
 ```
 * to help tsc with type inference add the JSDoc annotations (e.g. @param, @return)
+
+# 8. Developing your own blockchain
+* The very first block in a chain is called a genesis block.
