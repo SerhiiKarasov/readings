@@ -1318,3 +1318,10 @@ declare function greeting(name: string): void;
 
 # 8. Developing your own blockchain
 * The very first block in a chain is called a genesis block.
+
+# 9. Developing a browser-based blockchain node
+* The lib directory implements the blockchain creation and block mining. It also has a universal function for generating hashes for both the browser and Node.js environments.
+* The browser directory contains the code that implements the UI of our blockchain app that. This code uses the code from the directory lib.
+* The node directory is a small demo of how you can run the app that also uses the code from the directory lib.
+* package for webserver 'serve'
+* to bundle css and htmls in a dist folder, need to use package 'copyfiles'
