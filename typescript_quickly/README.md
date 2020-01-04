@@ -1329,3 +1329,7 @@ declare function greeting(name: string): void;
     "compileDeploy": "tsc && npm run deploy",
     "deploy": "copyfiles -f src/browser/*.html src/browser/*.css dist"
 ```
+* after cloning code, need just to run
+```
+npm start
+```
