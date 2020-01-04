@@ -1325,3 +1325,7 @@ declare function greeting(name: string): void;
 * The node directory is a small demo of how you can run the app that also uses the code from the directory lib.
 * package for webserver 'serve'
 * to bundle css and htmls in a dist folder, need to use package 'copyfiles'
+```
+    "compileDeploy": "tsc && npm run deploy",
+    "deploy": "copyfiles -f src/browser/*.html src/browser/*.css dist"
+```
