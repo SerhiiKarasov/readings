@@ -1335,3 +1335,16 @@ npm run compileDeploy
 npm start
 in browser go to dist folder
 ```
+### web client part
+* index.html, main.ts, styles.css
+* html imports js code via:
+```
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="module" src="dist/browser/main.js"></script>
+</head>
+```
+* ts/js code reads data from html using getElementById API:
+```
+const amountEl              = document.getElementById('amount') as HTMLInputElement;
+```
