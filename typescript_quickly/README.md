@@ -1331,5 +1331,7 @@ declare function greeting(name: string): void;
 ```
 * after cloning code, need just to run
 ```
+npm run compileDeploy
 npm start
+in browser go to dist folder
 ```
