@@ -1348,3 +1348,5 @@ in browser go to dist folder
 ```
 const amountEl              = document.getElementById('amount') as HTMLInputElement;
 ```
+### how to debug in browser
+* ```CTRL``` + ```SHIFT``` + ```I``` and go to source code(```Sources```)find code and add breakpoint. To check what is in variable, add it to ```Watch```
