@@ -1350,3 +1350,12 @@ const amountEl              = document.getElementById('amount') as HTMLInputElem
 ```
 ### how to debug in browser
 * ```CTRL``` + ```SHIFT``` + ```I``` and go to source code(```Sources```)find code and add breakpoint. To check what is in variable, add it to ```Watch```
+
+# 10. Client-server communications using Node.js, TypeScript, and WebSockets
+### several useful packages/tools
+* ws - a Node.js library that supports WebSocket protocol(should be added as dependency in package.json)
+* press - a small Node.js framework offering HTTP support
+* demon - a tool that restarts node.js-based apps when the script file changes are detected
+* t-html - HTML templates in JavaScript for rendering to the browser’s DOM
+### longest chain rule
+* imagine latest approved block is #100, there are two miners with #101(1) and #101(2). It would be approved that one, after which somebody mined more blocks. 
