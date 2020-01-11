@@ -1359,3 +1359,12 @@ const amountEl              = document.getElementById('amount') as HTMLInputElem
 * t-html - HTML templates in JavaScript for rendering to the browser’s DOM
 ### longest chain rule
 * imagine latest approved block is #100, there are two miners with #101(1) and #101(2). It would be approved that one, after which somebody mined more blocks. 
+### project structure
+* public - html and css
+* src/client - client impl + main.ts, tsconfig.client.json
+* src/server - server impl + main.ts, tsconfig.server.json, message-server.ts, blockchain-server.ts
+* ser/shared - shared data types definitions
+* nodemon.json - config for nodemon tool
+* tsconfig.json - common configuration of compiler for both client and server
+
+
