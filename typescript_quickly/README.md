@@ -1366,5 +1366,9 @@ const amountEl              = document.getElementById('amount') as HTMLInputElem
 * ser/shared - shared data types definitions
 * nodemon.json - config for nodemon tool
 * tsconfig.json - common configuration of compiler for both client and server
-
-
+### custom tsconfig.json
+* If you introduce tsc configuration files named other than tsconfig.json, you need to use the -p option and specify the path to the file you want to use. 
+### start node.js with ts
+```
+ts-node myScript.ts
+```
