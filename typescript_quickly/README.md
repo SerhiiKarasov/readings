@@ -1383,7 +1383,19 @@ ts-node myScript.ts
 
 ### how to check sample server
 ```
+npm install
 npm run build:server
 node build/server/simple-websocket-server.js
 firefox  localhost:8000
+```
+### websocket states(readyState)
+0 - connecting - socket has been created. connection is not up
+1 - open - the connection is open and ready to communicate
+2 - closing the connection is closng 
+3 - closed the connection is closed 
+
+### how to debug
+```
+1) ctrl + I 
+network -> ws -> messages
 ```
