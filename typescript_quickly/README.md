@@ -1372,3 +1372,18 @@ const amountEl              = document.getElementById('amount') as HTMLInputElem
 ```
 ts-node myScript.ts
 ```
+### brief intro in websockets
+*  protocol allows bidirectional message-oriented streaming of text and binary data between browsers and web servers. 
+* In contrast to HTTP, WebSocket is not a request-response based protocol, and both the server and the client apps can initiate the data push to the other party as soon as the data becomes available, in real time.
+* there is a server (or a device) that may need to send an immediate notification to the user because some important event happened elsewhere. This is different from the use case when the user decides to send a request for fresh data to the server.
+### compare websockets to http
+* http - half duplex vs websockets full duplex
+* ~300 bytes of overhead of http vs couple of bytes by websockets
+* http/https vs ws/wss
+
+### how to check sample server
+```
+npm run build:server
+node build/server/simple-websocket-server.js
+firefox  localhost:8000
+```
