@@ -1399,3 +1399,26 @@ firefox  localhost:8000
 1) ctrl + I 
 network -> ws -> messages
 ```
+# 11. Developing Angular apps with TypeScript
+* the main players in the market for developing web apps (besides super-popular jQuery) are Angular and React.js
+* Vue.js is getting more and more traction every month
+* Angular is a framework. 
+* React.js is a library that does one thing really well: rendering of the UI in the browser’s DOM.
+### angular components/functionalities
+ * Dependency injection support
+* Angular Material - a library of modern-looking UI components
+* The router for arranging user’s navigation in the app
+* A module to communicate with the HTTP servers
+* Means for splitting the app into deployable modules that can be loaded either eagerly or lazily
+* Powerful Forms support
+* A library of reactive extensions (RxJS) to handle data streams
+* A development web server that supports live code reloads
+* The build tools for optimizing and bundling for deployment
+* The command-line interface to quickly scaffold an app, a library, or smaller artifacts like components, modules, services, et al.
+### install angular
+```
+npm install @angular/cli -g
+```
+```
+ng version
+```
