@@ -1422,3 +1422,14 @@ npm install @angular/cli -g
 ```
 ng version
 ```
+### create new angular project (it maybe that you need to install/update nvm)
+```
+ng new project_name --minimal
+```
+### run angular project in the browser
+```
+ng serve -o
+```
+### angular project 
+* src/app/app.component.ts
+* src/app/app.module.ts
