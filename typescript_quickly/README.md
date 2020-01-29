@@ -1443,6 +1443,43 @@ ng server --prod
 ```
 
 ```
-* src/app/app.module.ts - module
+* src/app/app.module.ts - module.  class decorated with the @NgModule() decorator.
 * Angular allows you to separate HTML from the TypeScript code, and if if you prefer to keep HTML in a separate file, use the property templateURL instead of template, for example: templateUrl: "app.component.html"
 * '''{}'''' in '''Welcome to {{title}}!''' is interpolation. Where '''title''' is a property of class AppComponent. 
+* it is possible to add css files via styles array in app.components.ts
+* in angular it is necessary to have at least one module. 
+* The @NgModule() decorator requires you to list all components and modules used in the app. 
+```
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+declarations: [ AppComponent, CustomerComponent, OrderComponent ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+* The bootstrap property names the top level component that the module must load first.
+* main.ts  
+```
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+platformBrowserDynamic()
+  .bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+```
+* platformBrowserDynamic() API creates a platform, which is an entry point to the web app.
