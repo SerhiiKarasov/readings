@@ -1429,7 +1429,18 @@ ng new project_name --minimal
 ### run angular project in the browser
 ```
 ng serve -o
+#or
+ng server --prod
 ```
 ### angular project 
-* src/app/app.component.ts
-* src/app/app.module.ts
+* src/app/app.component.ts - component,  a class decorated with @Component().It has properties selector, template, styles etc. Where selector contains value that can be used in html files. E.g.
+```
+  selector: 'app-root',
+```
+<body>
+  <app-root></app-root>
+</body>
+```
+
+```
+* src/app/app.module.ts - module
