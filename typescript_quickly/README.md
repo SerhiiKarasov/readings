@@ -1444,3 +1444,5 @@ ng server --prod
 
 ```
 * src/app/app.module.ts - module
+* Angular allows you to separate HTML from the TypeScript code, and if if you prefer to keep HTML in a separate file, use the property templateURL instead of template, for example: templateUrl: "app.component.html"
+* '''{}'''' in '''Welcome to {{title}}!''' is interpolation. Where '''title''' is a property of class AppComponent. 
