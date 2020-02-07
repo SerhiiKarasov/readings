@@ -1483,3 +1483,15 @@ platformBrowserDynamic()
   .catch(err => console.error(err));
 ```
 * platformBrowserDynamic() API creates a platform, which is an entry point to the web app.
+* The ng serve command builds and rebuild the bundles in memory to speed up the development process, but if you’d like to see the actual files, run the ng build command, and it’ll create the file index.html and all the bundles in the directory dist.
+*  The CLI-generated file angular.json contains all project configurations, and you can change the output directory as well as many other default options there.
+* ng new hello-world --minimal. If we wouldn’t use the --minimal option, CLI would also generate some boilerplate code for unit and end-to-end testing. 
+* component is a class with UI,
+* a service is just a class that implements the business logic of your app. Services don’t have UI, and Angular will instantiate and inject a service into our application’s component(s) or another service.
+### dependency injection
+```
+var product = new Product();
+createShipment(product);
+```
+* e createShipment() function depends on the existence of an instance of the Product object. In other words, the createShipment() function has a dependency: Product.
+* But the function itself doesn’t know how to create Product. The calling script should somehow create and give (think inject) this object as an argument to the function.
