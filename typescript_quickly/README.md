@@ -1495,9 +1495,7 @@ createShipment(product);
 ```
 * createShipment() function depends on the existence of an instance of the Product object. In other words, the createShipment() function has a dependency: Product.
 * But the function itself doesn’t know how to create Product. The calling script should somehow create and give (think inject) this object as an argument to the function.
-* 
-This is what the Dependency Injection pattern is about: If object A depends on an object identified by a token (a unique ID) B, object A won’t explicitly use the new operator to instantiate the object that B points at. Rather, it will have B injected from the operational environment.
-
+* This is what the Dependency Injection pattern is about: If object A depends on an object identified by a token (a unique ID) B, object A won’t explicitly use the new operator to instantiate the object that B points at. Rather, it will have B injected from the operational environment.
 * Let’s ask Angular CLI to generate the class ProductService in our hello-world project
 ```
 ng generate service product --skip-tests
