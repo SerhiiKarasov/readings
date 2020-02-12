@@ -1437,6 +1437,7 @@ ng server --prod
 ```
   selector: 'app-root',
 ```
+```
 <body>
   <app-root></app-root>
 </body>
