@@ -1524,3 +1524,7 @@ class ProductComponent {
   }
 }
 ```
+* For declaring custom types, it’s better to use interfaces instead of classes if possible.
+```
+ng generate component product --t --s --skip-tests
+```
