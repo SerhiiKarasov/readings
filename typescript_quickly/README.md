@@ -1528,3 +1528,24 @@ class ProductComponent {
 ```
 ng generate component product --t --s --skip-tests
 ```
+* In Angular, asynchronous HTTP are implemented using a special observable object offered by the RxJS library that comes with Angular.
+* If your app requires HTTP communications, you need to add HttpClientModule to the imports section of the @NgModule() decorator. After that, you can use the injectable service HttpClient for invoking get(), post(), put(), delete(), and other requests. Each of these requests returns an Observable object.
+* In the context of client-server communications, you can think of Observable as a stream of data that can be pushed to your web app by the server. 
+```
+interface Product {
+    id: number,
+    title: string
+}
+...
+class ProductService {
+constructor(private httpClient: HttpClient) { }
+
+ngOnInit() {
+  this.httpClient.get<Product>('/product/123')
+      .subscribe(
+        data => console.log(`id: ${data.id} title: ${data.title}`),
+        (err: HttpErrorResponse) => console.log(`Got error: ${err}`)
+      );
+  }
+}
+```
