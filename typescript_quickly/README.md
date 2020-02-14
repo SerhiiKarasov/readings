@@ -1501,3 +1501,26 @@ createShipment(product);
 ```
 ng generate service product --skip-tests
 ```
+
+*  DI allows you to decouple application components and services by sparing them from knowing how to create their dependencies.
+*  token, which is an arbitrary key representing an object to be injected.
+*  You map tokens to values for DI by specifying providers. A provider is an instruction to Angular about how to create an instance of an object for future injection into a target component or another service.
+*  a provider can be specified in the module declaration (if you need a singleton service), 
+* or via injection
+```
+@Component({
+  providers: [ProductService]
+  # or
+  # providers:[{provide: ProductService, useClass: ProductService}]
+  # or
+  # providers: [{provide: ProductService, useClass: AnotherProductService}]
+})
+class ProductComponent {
+  product: Product;
+
+  constructor(productService: ProductService) {
+
+    this.product = productService.getProduct();
+  }
+}
+```
