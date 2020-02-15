@@ -1592,3 +1592,22 @@ constructor(fb: FormBuilder) {
 </form>
 	
 ```
+* In a single-page application (SPA), the web page won’t be reloaded, but its parts may change
+* the content area of the page (known as router outlet). 
+* Every application has one router object, and to arrange navigation, you need to configure the routes of your app. Angular includes many classes supporting navigation — for example, Router, Route, Routes, ActivatedRoute, and others. You configure routes in an array of objects of type Route, as in listing 11.27:
+
+```
+const routes: Routes = [
+    {path: '',        component: HomeComponent},
+    {path: 'product', component: ProductDetailComponent}
+];
+...
+import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
+...
+@NgModule({
+  imports: [BrowserModule, 
+            RouterModule.forRoot(routes)],
+    ...
+})
+```
