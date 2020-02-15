@@ -1551,3 +1551,44 @@ ngOnInit() {
 ```
 * hook method ngOnInit() is invoked by Angular when a component is instantiated and all its properties are initialized.
 * By default, HttpClient expects the data in JSON format, and the data is automatically converted into JavaScript objects. If you expect non-JSON data, use the responseType option.
+
+* input forms in typescript. 
+```
+myFormModel: FormGroup;
+
+  constructor() {
+    this.myFormModel = new FormGroup({
+      username: new FormControl(''),
+      ssn: new FormControl('')
+    });
+  }
+```
+* FormControl attaching one or more built-in or custom validators, which can be attached to a form control or to the enire form. add two built-in Angular validators to a form control.
+```
+city = new FormControl('New York',
+                [Validators.required,
+                 Validators.minLength(2)]);
+```
+* The injectable service FormBuilder is one of the way creation of form models.
+```
+constructor(fb: FormBuilder) {
+  this.myFormModel = fb.group({
+    username: [''],
+    ssn: [''],
+    passwordsGroup: fb.group({
+      password: [''],
+      pconfirm': ['']
+    })
+  });
+}
+```
+* The formGroup directive binds an instance of the FormGroup class that represents the entire form model to a top-level form’s DOM element, usually a <form>. In the component template, use formGroup with a lowercase f, and in TypeScript, create an instance of the class FormGroup with a capital F
+```
+<form [formGroup]="myFormModel">
+  <div formGroupName="dateRange">
+    <input type="date" formControlName="from">
+    <input type="date" formControlName="to">
+  </div>
+</form>
+	
+```
