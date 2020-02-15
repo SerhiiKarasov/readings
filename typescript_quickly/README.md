@@ -1549,3 +1549,5 @@ ngOnInit() {
   }
 }
 ```
+* hook method ngOnInit() is invoked by Angular when a component is instantiated and all its properties are initialized.
+* By default, HttpClient expects the data in JSON format, and the data is automatically converted into JavaScript objects. If you expect non-JSON data, use the responseType option.
