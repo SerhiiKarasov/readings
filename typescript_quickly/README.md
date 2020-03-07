@@ -1613,3 +1613,57 @@ import { RouterModule } from '@angular/router';
 ```
 # 13. Developing React.js apps with TypeScript
 * it’s the second-most popular JavaScript library (jQuery remains the most broadly used library). React is not a framework but a library responsible for rendering views in the browser (think of the letter V in the MVC design pattern). 
+* main elements in React are components. 
+* react give an opportun. to control even smallest page element(e.g. div), and everything else can be written in another framework
+* you can develop react in both js and ts, deploy via babel or webpack
+### simplest application in react
+```<!DOCTYPE html>
+<html>
+   <head>
+     <meta charset="utf-8">
+     <script 
+ crossorigin src="https://unpkg.com/react@16/umd/react.development.js">
+      </script>
+     <script 
+ crossorigin src="https://unpkg.com/react-dom@16/umd/
+ react-dom.development.js">
+      </script>
+   </head>
+   <body>
+     <div id="root"></div>
+ 
+     <script >
+         const element = React.createElement('h1',
+                                              null,
+                                              'Hello World');
+          ReactDOM.render(element,
+                         document.getElementById('root'));
+       </script>
+ 
+   </body>
+</html>
+```
+* declaring the page content (React.createElement())
+* rendering page to the browser’s DOM (ReactDOM.render()) 
+* In React, UI elements are represented as a tree of components that always has a single root element.
+* This web page has a <div> with the ID root that serves as such an element for the content rendered by React
+* downloading of the react packages are done over cdn
+```
+<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+```
+# generate react application using the create-react-app
+```
+npm install create-react-app -g
+```
+* it automatically installs react, react-dom, react-scripts
+```
+create-react-app hello-world --typescript
+```
+* start application
+```
+npm start
+//or 
+react-scripts start
+```
+
+	
