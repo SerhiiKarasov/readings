@@ -1611,3 +1611,5 @@ import { RouterModule } from '@angular/router';
     ...
 })
 ```
+# 13. Developing React.js apps with TypeScript
+* it’s the second-most popular JavaScript library (jQuery remains the most broadly used library). React is not a framework but a library responsible for rendering views in the browser (think of the letter V in the MVC design pattern). 
