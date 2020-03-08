@@ -1760,3 +1760,21 @@ export default App;
     	* The reducer (a pure function) takes the current state object and then clones, updates, and returns it.
    	* The app component subscribes to the store, receives the new state object, and updates the UI accordingly.
 * The reducer does—it’s a pure function that specifies how the app state should be changed. The reducer never changes the current state, but creates a new version and returns a new reference to it. The reducer function doesn’t implement any app logic that requires working with external services.
+* useeffects is triggered after the component is added to the DOM, or each time it is re-rendered
+* For making Ajax requests - use the browser’s Fetch API (http://mng.bz/Xp4a). The fetch() function returns a Promise,need async and await keywords 
+* the async and await keywords for asynchronous code is equivalent to promises with chained .then() invocations 
+* third-party libraries for handling HTTP requests Axios (www.npmjs.com/package/axios). 
+* hook to be trigerred only if some exact state is changing
+```
+useEffect(() => console.log("useEffect() was invoked"),[]);
+vs
+useEffect(() => console.log("useEffect() was invoked"),['city']);
+```
+*  A React app is a tree of components: container components, presentation ones. A container (a.k.a. smart) component contains application logic, communicates with external data providers, and passes data to its child components. Typically, container components are stateful and have little or no markup. A presentation (a.k.a. dumb) component just receives data from its parent and displays it.A presentation component gets the data to be displayed via its props JavaScript object. 
+* React uses props for data exchange between parent and child components 
+* Each component has a property called props, which can be an arbitrary JavaScript object with properties specific to your app
+* props are immutable, and a component can’t modify the original data received via props. 
+
+###  Virtual DOm
+*  layer between the component and the browser’s DOM. Each component consists of UI elements, and Virtual DOM optimizes the process of rendering these elements to the browser’s DOM
+* if the DOM is changed by javascript, react checks diffs and send it browser dom
