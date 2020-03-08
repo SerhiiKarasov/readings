@@ -1750,3 +1750,13 @@ const App: React.FC = () => {
 export default App;
 
 ```
+*  In React apps, the most popular state-management Javascript library is Redux (you could also choose to use MobX, another popular library). Redux is based on the following three principles:
+	* Single source of truth— There is a single data store, which contains the state of your app.
+    	* State is read-only— When an action is emitted, the reducer function clones the current state and updates the cloned object based on the action.
+    	* State changes are made with pure functions— Reducer functions take an action and the current state object, and they return a new state.
+ 
+*  In Redux, the data flow is unidirectional:
+    	* The app component dispatches the action on the store.
+    	* The reducer (a pure function) takes the current state object and then clones, updates, and returns it.
+   	* The app component subscribes to the store, receives the new state object, and updates the UI accordingly.
+* The reducer does—it’s a pure function that specifies how the app state should be changed. The reducer never changes the current state, but creates a new version and returns a new reference to it. The reducer function doesn’t implement any app logic that requires working with external services.
