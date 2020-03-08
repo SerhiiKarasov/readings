@@ -1693,5 +1693,60 @@ const MyComponent = (props) => {
  
 export default MyComponent;
 ```
+###  Managing a component’s state 
+* A component’s state is a datastore that contains data that should be rendered by the component. The data in the component’s state is preserved even if React re-renders the component. If you have a Search component, its state could store the last search criteria and the last search result. 	
+* for class-based components use ```this.setState(...). ```
+```
+interface State {
+  userName: string;
+  imageUrl: string;
+}
++
+export default class App extends Component {
+ 
+  state: State = { userName: 'Rashid',
+           imageUrl: 'https://picsum.photos/600/150' };
+ 
+  render() {
+    return (
+      <div>
+        <h1>{this.state.userName}</h1>
+        <img src={this.state.imageUrl} alt=""/>
+       </div
+    );
+  }
+}
 
-	
+```
+### hooks
+* hooks allow you to “attach” behavior to a functional component without the need to write classes, create wrappers, or use inheritance. Example, useState()
+```
+const [userName, setUserName] = useState('John');
+```
+* example 
+```
+import React, {useState} from 'react';
+ 
+interface State {
+  userName: string;
+  imageUrl: string;
+}
+ 
+const App: React.FC = () => {
+ 
+  const [state, setState] = useState<State>({
+    userName: 'John',
+    imageUrl: 'https://picsum.photos/600/150'
+  });
+ 
+  return (
+    <div>
+      <h1>{state.userName}</h1>
+      <img src={state.imageUrl} alt=""/>
+    </div>
+  );
+}
+ 
+export default App;
+
+```
