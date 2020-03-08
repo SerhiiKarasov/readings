@@ -1665,5 +1665,33 @@ npm start
 //or 
 react-scripts start
 ```
+* main files to pay attention
+```
+public/index.html
+src/App.test.tsx
+src/App.tsx
+src/index.tsx
+```
+* The serviceWorker.ts file is generated just in case you want to develop a progressive web app (PWA) that can be started offline using cached assets	
+* JSX is an XML-like syntax extension to ECMAScript without any defined semantics. It’s NOT intended to be implemented by engines or browsers.
+* JSX stands for JavaScript XML. It defines a set of XML tags that can be embedded inside JavaScript code. These tags can be parsed and turned into regular HTML tags for rendering by the browser, and React includes such a parser. 
+* in order tsc to understand tsx files:
+```
+"jsx": "react"
+```
+* Every React app has at least one component, the root component. 
+* A React component can be declared either as a function or a class. A functional (function-based) component is implemented as a function and is structured as follows.
+```
+const MyComponent = (props) => {
+ 
+  return (
+    <div>...</div>
+  )
+ 
+  // other functions may go here
+}
+ 
+export default MyComponent;
+```
 
 	
