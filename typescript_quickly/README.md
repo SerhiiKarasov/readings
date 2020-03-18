@@ -1778,3 +1778,44 @@ useEffect(() => console.log("useEffect() was invoked"),['city']);
 ###  Virtual DOm
 *  layer between the component and the browser’s DOM. Each component consists of UI elements, and Virtual DOM optimizes the process of rendering these elements to the browser’s DOM
 * if the DOM is changed by javascript, react checks diffs and send it browser dom
+
+# Vue.js
+* Vue is a component-based library that is focused on View(from MVC)
+* it is possible to attach a vue instance to any html element
+* uses virtual dom
+### simplest vue.js example
+```
+<!DOCTYPE html>
+  <body>
+    <div id="one"></div>
+    <div id="two"></div>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js></script>
+  </body>
+</html>
+```
+* The constructor of the Vue object requires an argument of type Component-Options
+* and now example with vue changing the div one
+```
+<!DOCTYPE html>
+  <body>
+    <div id="one">
+        <h1>{{greeting}}</h1>
+    </div>
+    <div id="two">
+        <h1>{{greeting}}</h1>
+    </div>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+ 
+    <script type="text/javascript">
+      const myApp = new Vue({
+          el: "#one",
+          data: {
+              greeting: "Hello World"
+          }
+      })
+    </script>
+  </body>
+</html>
+```
