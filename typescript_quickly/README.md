@@ -1819,3 +1819,54 @@ useEffect(() => console.log("useEffect() was invoked"),['city']);
   </body>
 </html>
 ```
+* it is possible to provide render object instead of string literals:
+```
+new Vue({
+  render: h => h(App) // App is a top-level component
+})
+```
+* h - stands for hyperscript(a script that generates html structures)
+* as in example it can <div> element to play the role of UI component, it is still possible to make such Vue compoment. It consists of :
+	* a declarative template
+	* a script
+	* styles
+	
+### vue cli
+```
+npm install @vue/cli -g
+vue create hello-world
+cd hello-world
+npm run serve
+```
+* Installing Vue using npm gives TypeScript type declaration files,
+* invoking the $mount('#app') method starts the mounting process and attaches the Vue instance to the DOM element with the app
+* To support TypeScript decorators, the compiler’s experimentalDecorators option must be set to true in tsconfig.json.
+* exclamation mark near msg is to request no notification on msg to be null or undefined:
+```
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+ 
+@Component
+export default class HelloWorld extends Vue {
+  @Prop() private msg!: string;
+}
+</script>
+```
+* Vue CLI generated the code with a @Prop() property-level decorator to declare that the HelloWorld component takes one property, msg.
+* props are used to send data from parent to child. 
+* emit() are used to send data from child to parent.
+```
+//child
+this.$emit("place-order", orderData);
+...
+//parent
+<order-component @place-order = "processOrder">
+ 
+...
+ 
+processOrder(payload) {
+ 
+// handle the payload, i.e. the orderData received from the order component
+ 
+}
+```
