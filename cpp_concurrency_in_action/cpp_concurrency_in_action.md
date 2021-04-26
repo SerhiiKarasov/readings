@@ -243,9 +243,97 @@ void update_data_for_widget(widget_id w, widget_data& data);
 void oops_again(widget_id w)
 {
     widget_data data;
-    std::thread t(update_data_for_widget, w, data);
+    std::thread t(update_data_for_widget, w, data);//thread constructor will just create an internal copy
     display_status();
-    t.join();
-    process_widget_data();
+    t.join();//the data from this thread was not updated
+    process_widget_data(data);
 }
+```
+the correct solution for the problem is using local copy instead of reference, is to wrap it with std::ref
+```
+void update_data_for_widget(widget_id w, widget_data& data);
+std::thread t(update_data_for_widget, w, std::ref(data));//thread constructor will just create an internal copy
+```
+* passing a member function point as the function
+```
+class X
+{
+    public: 
+    void do_lengthy_work();
+};
+X my_x;
+std::thread t(&X::do_lengthy_work, &my_work);
+```
+this code will invoke my_x.do_lengthy_work() on the new thread, because the address of my_x is supplied as the object pointer. In order to add some argument to the method just add third argument in the thread constructor
+
+
+### transferring ownership of a thread
+* use case: function creates a background thread but passes back ownership of the new thread to the calling function rather than waiting for it to complete.
+* use std::move of std::thread, thread is only moveable, not copyable
+
+### hand-made scoped_guard for the thread
+```
+class scoped_thread
+{
+    std::thread t;
+public:
+    explicit scoped_thread(std::thread t):
+    t(std::move(t))
+    {
+        if(!t.joinable())
+        {
+            throw std::logic_error("No thread");
+        }
+    }
+    ~scoped_thread()
+    {
+        t.join();
+    }
+    scoped_thread(scoped_thread const &)=- delete;
+    scoped_thread& operator=(scoped_thread const &)=- delete;
+};
+ struct func();
+ void f(
+     int some_local_state;
+     scoped_thread t(std::thread (func(some_local_state)));
+     do_something_in_current_thread;
+ )
+
+```
+
+# sharing data between threads
+```
+#include <exception>
+#include <memory>
+#include <mutex>
+#include <stack>
+struct empty_stack: std::exception
+{
+    const char* what() const throw();
+};
+
+template <typename T>
+class threadsafe_stack
+{
+private: 
+    std::stack<T> data;
+    mutable std::mutex m;
+    
+public: 
+    threadsafe_stack(){};
+    threadsafe_stack(const threadsafe_stack& other)
+    {
+        std::lock_guard<std::mutex> lock(other.m);
+        data=other.data;
+    }
+    threadsafe_stack &operator = (const threadsafe_stack&) = delete; //assignment operator is deleted
+
+    void push(T new_value)
+    {
+
+    }
+    std::shared_ptr<T> pop();
+    void pop(T& value);
+    bool empty() const;
+};
 ```
