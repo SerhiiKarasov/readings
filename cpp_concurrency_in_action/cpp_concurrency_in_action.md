@@ -414,12 +414,22 @@ if(!s.empty())
 }
 ```
 * the problem is related to the interface, need to change the interface design
-
+* option 1: pass in a reference. requires constructing object of stack, may be resource hungry. requires type to be assignable. 
 ```
+std::vector<int> result;
+some_stack.pop(result);
+```
+* option 2: require a no-throw copy constructor, or move constructor. Use std::is_nothrow_copy_constructible, std::is_nothrow_move_constructible.
+* option 3: return a point to the popped item.pointers can be copied without throwing. but requires a means of managing the memory allocated and adds some overhead for simple types like int. Good to use std::shared_ptr, is destroyed once the last pointer is destroyed. 
+* option 4: option1 + option2 or option1 + option3
+* example of thread safe stack data structure
+```
+
 #include <exception>
 #include <memory>
 #include <mutex>
 #include <stack>
+
 struct empty_stack: std::exception
 {
     const char* what() const throw();
@@ -437,16 +447,42 @@ public:
     threadsafe_stack(const threadsafe_stack& other)
     {
         std::lock_guard<std::mutex> lock(other.m);
-        data=other.data;
+        data=other.data;//copy performed in constructor body
     }
+    
     threadsafe_stack &operator = (const threadsafe_stack&) = delete; //assignment operator is deleted
 
+    std::shared_ptr<T> pop()
+    {
+        std::lock_guard<std::mutex> lock(other.m);
+        if(data.empty()) throw empty_stack();//try for emptry before assignment
+        std::shared_ptr<T> const res(std::make_shared<T>(data.top()));//allocate return value before modifying the stack
+        data.pop();
+        return res;
+    }
+    
     void push(T new_value)
     {
-
+        std::lock_guard<std::mutex> lock(m);
+        data.push(new_value);
     }
-    std::shared_ptr<T> pop();
-    void pop(T& value);
-    bool empty() const;
+    
+    void pop(T& value)
+    {
+        std::lock_guard<std::mutex> lock(other.m);
+        if(data.empty()) throw empty_stack();//try for emptry before assignment
+        value=data.top();
+        data.pop();
+    }
+    bool empty() const
+    {
+         std::lock_guard<std::mutex> lock(other.m);
+         return data.empty();
+    }
 };
 ```
+* the stack is not assignable, no assignment operator and no swap().
+* the stack is copyable
+* the problem with locking schemes, sometimes you need more than one mutex.but that may lead to deadlocks.
+
+###  deadlock: the problem and solution
