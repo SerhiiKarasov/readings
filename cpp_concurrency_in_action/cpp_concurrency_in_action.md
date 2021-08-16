@@ -376,11 +376,44 @@ void foo()
     x.process_data(malicious_function);
     unprotected->do_something();
 }
-
 ```
 ### spotting race conditions inherent in interfaces
 * even having all methods covered with mutex it would not help with the deleting of the node in double linked list, as generally you need to modify 3 nodes. it is necessary to cover with mutex the whole list.
 * example with stack, we can call push(), pop(), top(), empty(), size();
+```
+template<typename T, typename Container=std::deque<T> >
+class stack
+{
+public:
+    explicit stack(const Container&);
+    explicit stack(Container&& = Container());
+    template <class Alloc> explicit stack(const Alloc&);
+    template <class Alloc> stack(const Container&, const Alloc&);
+    template <class Alloc> stack(Container&&, const Alloc&);
+    template <class Alloc> stack(stack&&, const Alloc&);
+    
+    bool empty() const;
+    site_t size() const;
+    T& top();
+    T const& top() const;
+    void push(T const&);
+    void push(T&&);
+    void pop();
+    void swap(stack&&);
+};
+```
+the problem is that size(), empty() cannot be trusted. When they are called they are ok, but once they've returned other threads are free to access the stack and might push(), pop() before the thread that needed size() info is starting its work.
+* in particular if stack instance is not shared, it's safe to check for empty() and then call top(), or top() and then pop()
+```
+stack<int> s;
+if(!s.empty())
+{
+    int const value = s.top();//calling top on empty container is UB
+    s.pop();
+    do_something(value);
+}
+```
+* the problem is related to the interface, need to change the interface design
 
 ```
 #include <exception>
