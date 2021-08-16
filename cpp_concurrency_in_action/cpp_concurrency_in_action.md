@@ -1,4 +1,4 @@
-# Hello, world of concurrency in C++
+# 1.Hello, world of concurrency in C++
 ### task switching on single processor system
 ### concurrency with multiple processes
  * divide application into multiple, separate single-threaded processes that are run at the same time. 
@@ -32,7 +32,7 @@ int main()
     t.join();
 }
 ```
-# Managing threads
+# 2.Managing threads
 ### std::thread
 * can be launched, can be one to wait it to finish, or one to have it in background
 ### argument
@@ -301,7 +301,16 @@ public:
 
 ```
 
-# sharing data between threads
+# 3.sharing data between threads
+* at some point of time of work on the data structures the invariant can be broken, it's better another threads do not access to such intermediate data.
+* e.g. delete a node in a list 1) identify node to delete, 2) change link in previous node to point to the next one 3) change link in next node to point to the previous node 4) delete the node. At point 2-3 we have broken invariants.
+* race condition is anything where outcome depends on the relative ordering of execution of operations on two or more threads.
+### avoiding race conditions
+* wrap your code with a protection mechanism to ensure that only the thread actually performing a modification can see the intermediate stats where the invariants are broken.
+* lock-free programming, modification of the data structure/invariant design so that modifications are done as a series of indivisible changes.
+* transaction, modifications of the data structure are performed withing one operation called transaction. There may be transaction log and one step commit. Software transactional memory(STM). C++ doesn't support it, at least in C++20.
+
+### protecting data with mutexes
 ```
 #include <exception>
 #include <memory>
