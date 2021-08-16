@@ -311,6 +311,77 @@ public:
 * transaction, modifications of the data structure are performed withing one operation called transaction. There may be transaction log and one step commit. Software transactional memory(STM). C++ doesn't support it, at least in C++20.
 
 ### protecting data with mutexes
+* the thread library ensures that once the one thread locked a specific mutex, all other threads that try to lock the same mutex have to wait for the unlock.
+* mutexes can cause deadlock
+* the syntax is: create instance of std::mutex, and call it's member function lock(), at the end call unlock()
+* the RAII solution is to use std::lock_guard
+```
+#include <list>
+#include <mutex>
+#include <algorithm>
+
+std::list<int> some_list;
+std::mutex some_mutex;
+void add_to_list(int value)
+{
+    std::lock_guard<std::mutex> guard(some_mutex);
+    some_list.push_back(new_value);
+}
+
+bool list_contains(int value_to_find)
+{
+    std::lock_guard<std::mutex> guard(some_mutex);
+    return std::find(some_list.begin(), some_list.end(), value_to_find) != some_list.end();
+}
+```
+the usage of the same mutex makes list_contains and add_to_list mutually exclusive.
+* the previous example will not work properly if the list would be passed via reference/pointer. Any code that has an access to that pointer or reference can access/modify the protected data without locking the mutex.
+
+### structuring code for protecting shared data
+* check that none of the member functions return a pointer or reference to the protected data
+* check that none of the member functions are passing pointers or references to the 'third party' functions.
+* bad use case, it is possible to have written access to the protection data which is not mutually exclusive
+```
+classe some_data
+{
+private:
+    int a;
+    std::string b;
+public:
+    void do_something();
+};
+
+class data_wrapper
+{
+private:
+    some_data data;
+    std::mutex m;
+public:
+    template<typename Function>
+    void process_data(Function func)
+    {
+        std::lock_guard<std::mutex> l(m);
+        func(data);
+    }
+};
+
+some_data *unprotected;
+void malicious_function(some_data& protected_data)
+{
+    unprotected = &protected_data;
+}
+data_wrapper x;
+void foo()
+{
+    x.process_data(malicious_function);
+    unprotected->do_something();
+}
+
+```
+### spotting race conditions inherent in interfaces
+* even having all methods covered with mutex it would not help with the deleting of the node in double linked list, as generally you need to modify 3 nodes. it is necessary to cover with mutex the whole list.
+* example with stack, we can call push(), pop(), top(), empty(), size();
+
 ```
 #include <exception>
 #include <memory>
