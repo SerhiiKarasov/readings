@@ -486,3 +486,145 @@ public:
 * the problem with locking schemes, sometimes you need more than one mutex.but that may lead to deadlocks.
 
 ###  deadlock: the problem and solution
+* deadlock example: there are two mutexes. Both mutexes need to be locked to perform the operation. There are two threads, each of them hold one mutex only. Both of the threads are waiting another to unlock its mutex. 
+* the common advice is: always lock the two mutexes in the same order. Sometimes it is straightforward, when both mutexes are serving different purposes. Sometimes it is not, when mutexes are protecting a separate instance of the same class. 
+* solution for taking care of pair of mutexes is to use std::lock. It can lock two or more mutexes at once without a risk of deadlock.
+```
+class some_big_object;
+void swap(some_big_object& lhs, some_big_object& rhs);
+
+class X
+{
+private: 
+    some_big_object some_detail;
+    std::mutex m;
+public: 
+    X(some_big_object const& sd): some_detail(sd){}
+    friend void swap(X& lhs, X& rhs)
+    {
+        if(&lhs==&rhs)//attempting to acquire lock on a std::mutex that is already held by the same thread is UB
+            return; // std::recursive_mutex can be locked by the same thread multiple times
+        std::lock(lhs.m, rhs.m);//locking of both mutexes, if the exception would be thrown by any of the mutexes locking, the already locked one would be released.
+        std::lock_guard<std::mutex> lock_a(lhs.m, std::adopt_lock);//adopt_lock means that the mutexes are already locked and guard should just adopt the ownership of the existing lock, rather then attempt to lock the mutex in the constructor
+        std::lock_guard<std::mutex> lock_b(rhs.m, std::adopt_lock);
+        swap(lhs.some_detail, rhs.some_detail);
+    }
+};
+```
+* the std::lock doesn't help when they are locked separatly
+* the most frequent reason of the deadlock is related to locks. But it is not the only reason.
+* it is possible to deadlock with two threads without any explicit lock by calling join() on the std::thread for the other. In that case neither thread can progress as it wits for the another thread.
+* the solution is to implement the idea, don't wait for a thread if it may wait for your thread
+### avoiding nested deadlocks
+* don't acquire lock if you already hold one, if you need several locks use std::lock.
+
+### avoiding calling user supplied code while holding a lock
+* that code can acquire locks, hence we may have a problem with nested deadlocks
+
+### acquire locks in a fixed order
+* if you need to acquire several locks, so then use std::locks to preserve the order of locking
+* in some cases it is not so straightforward, e.g. working on list. When you need to access the list, threads must acquire three nodes 1) the one to delete, 2) node before 3) node after.  But if two threads are traversing same list in reverse orders - we can have a deadlock, cause the nodes maybe locked in different orders. thread 1 will lock N and N+1, while thread 2 will lock N+1 and N. The possible solution in this example to define the order of traversal.
+
+### use a lock hierarchy
+* it is a particular case of defining lock ordering.
+* the idea is that you divide the application into layers and identify all the mutexes that may be locked in any given layer. Code will not be permitted to lock the mutex that is already locked in a lower layer. You can check it in a runtime by assigning layer numbers to each mutex and keeping record of which mutex are locked by each thread.
+* example:
+```
+hierarchical_mutex high_level_mutex(10000);// 10k is high level prio
+hierarchical_mutex low_level_mutex(5000); //5k is low level prio
+
+int do_low_level_stuff();
+
+int low_level_func()
+{
+    std::lock_guard<hierarchical_mutex> lk(low_level_mutex);
+    return do_low_level_stuff();
+}
+
+
+void do_high_level_stuff(int some_param);
+
+int high_level_func()
+{
+    std::lock_guard<hierarchical_mutex> lk(high_level_mutex);
+    do_high_level_stuff(low_level_func());
+}
+
+void thread_a()//is ok, from the pov of hierarchy
+{
+    high_level_func();
+}
+
+hierarchical_mutex other_mutex(100); // is ultra low level prio
+
+void do_other_stuff();
+
+void other_stuff()
+{
+    high_level_func(); //call high prio function? but the prio of other_stuff is very low. It's wrong.!!!
+    // the hierarchical_mutex will throw exception
+    do_other_stuff();
+}
+void thread_b() // disregards the rule
+{
+    std::lock_guard<hierarchical_mutex> lk(other_mutex);
+    other_stuff();
+}
+```
+* deadlock between hierarchical_mutex are impossible, because the mutexes enforce ordering
+* you can't hold two locks at the same time if they are not of the same level.
+* for std::lock_guard<> usability the user defined hierarchical_mutex should implement lock(), unlock(), try_lock();
+* try_lock() if the lock is hold by another thread will return false and will not wait for the another thread to unlock the mutex.
+```
+class hierarchical_mutex
+{
+    std::mutex internal_mutex;
+    unsigned long const hierarchy_value;
+    unsigned long previous_hierarchy_value;
+    static thread_local unsigned long this_thread_hierarchy_value;
+    
+    void check_for_hierarchy_violation()
+    {
+        if(this_thread_hierarchy_value <= hierarchy_value)
+        {
+            throw std::logic_error("mutex hierarchy was violated");
+        }
+    }
+    
+    void update_hierarchy_value()
+    {
+        previous_hierarchy_value=this_thread_hierarchy_value;
+        this_thread_hierarchy_value=hierarchy_value;
+    }
+public:
+    explicit hierarchical_mutex(unsigned long value):
+        hierarchy_value(value), 
+        previous_hierarchy_value(0)
+    {}
+    
+    void lock()
+    {
+        check_for_hierarchy_violation();
+        internal_mutex.lock();
+        update_hierarchy_value();
+    }
+    
+    void unlock()
+    {
+        this_thread_hierarchy_value=previous_hierarchy_value;
+        internal_mutex.unlock();
+    }
+    
+    bool try_unlock()
+    {
+        check_for_internal_violation();
+        if(!internal_mutex.try_lock())
+            return false;
+        update_hierarchy_value();
+        return true;
+    }
+};
+
+thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULONG_MAX);
+
+```
