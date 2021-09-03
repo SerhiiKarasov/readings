@@ -625,6 +625,9 @@ public:
     }
 };
 
-thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULONG_MAX);
+thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULONG_MAX); //hierarchy is initialized to max value
+//every thread has its own copy
 
 ```
+### std::unique_lock
+* more flexible substitute for std::lock_guard() is std::unique_lock, which is RAII as well
