@@ -581,11 +581,11 @@ class hierarchical_mutex
     std::mutex internal_mutex;
     unsigned long const hierarchy_value;
     unsigned long previous_hierarchy_value;
-    static thread_local unsigned long this_thread_hierarchy_value;
+    static thread_local unsigned long this_thread_hierarchy_value;//this is important to have this value that represents the current thread value hierarchy
     
     void check_for_hierarchy_violation()
     {
-        if(this_thread_hierarchy_value <= hierarchy_value)
+        if(this_thread_hierarchy_value <= hierarchy_value)//passes successfully for the first time because this_value is ULONG_MAX
         {
             throw std::logic_error("mutex hierarchy was violated");
         }
@@ -605,7 +605,7 @@ public:
     void lock()
     {
         check_for_hierarchy_violation();
-        internal_mutex.lock();
+        internal_mutex.lock();// with this check, lock delegates to the internal mutex for the actual locking
         update_hierarchy_value();
     }
     
@@ -625,8 +625,8 @@ public:
     }
 };
 
-thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULONG_MAX); //hierarchy is initialized to max value
-//every thread has its own copy
+thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULONG_MAX); //hierarchy is initialized to max value, so initially any mutex can be locked
+//every thread has its own copy, cause it is thread_local
 
 ```
 ### std::unique_lock
