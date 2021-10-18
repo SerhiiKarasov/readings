@@ -631,3 +631,31 @@ thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULO
 ```
 ### std::unique_lock
 * more flexible substitute for std::lock_guard() is std::unique_lock, which is RAII as well
+* doesn't always own the mutex it is associated with
+* can take as a second argument std::adopt_lock to have the lock object manage the lock on a mutex
+* can take as a second argument std::defer_lock to indicate that mutex should be unlocked on construction, the lock can be acquired later, by calling lock()
+
+```
+class some big_object;
+void swap(some_big_object& lhs, some_big_object& rhs);
+
+class X
+{
+    private:
+        some_big_object some_detail;
+        std::mutex m;
+    public:
+        X(some_big_object const& sd): some_detail(sd){}
+
+        friend void swap(X& lhs, X &rhs)
+        {
+            if(&lhs == &rhs)
+                return;
+            
+            std::unique_lock<std::mutex> lock_a(lhs.m, std::defer_lock);//std::defer_lock leaves mutexts unlocked
+            std::unique_lock<std::mutex> lock_b(lhs.m, std::defer_lock); 
+            std::lock(lock a, lock b); // lock_a/b can be passed cause they provide lock(), try_lock(), unlock()
+            swap(lhs.some_detail, rhs.some_detail);
+        }
+}
+```
