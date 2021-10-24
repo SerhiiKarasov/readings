@@ -737,3 +737,50 @@ public:
 * shared data needs protection only on initialization(e.g. is read only when created
 
 ### protecting shared data on init
+* lazy init (each operation that requires the resource first checks to see if it has been initialized and then initializes it before use if not)
+  ```
+std::shared_ptr<some_resource> resource_ptr;
+
+void foo()  
+{
+    if (!resource_ptr)
+    {
+        resource_ptr.reset(new some_resource);
+    }
+    resource_ptr->do_smth();
+}
+```
+* if shared resource is safe for concurrent access, the only thing to redo is init, this solution is not optimal as it requires serealization of all threads
+```
+std::shared_ptr<some_resource> resource_ptr;
+std::mutex resorce_mutex;
+
+void foo()  
+{
+    std::unique_lock<std::mutex> lk(resource_mutex); // all threads are serialized here
+    if (!resource_ptr)
+    {
+        resource_ptr.reset(new some_resource);
+    }
+    lk.unlock(); // only init is protected
+    resource_ptr->do_smth();
+}
+```
+* one not good solution is Double-Checked Locking pattern.   the pointer is first read without acquiring the lock B (in the code below), and the lock is acquired only  if the pointer is NULL. The pointer is then checked again once the lock has been acquired c (hence the double-checked part) in case another thread has done the initialization between the first check and this thread acquiring the lock
+```
+void undefined_behaviour_with_double_checked_logic()
+{
+    if(!resource_ptr)
+    {
+        std::lock_guard<std::mutex> lk(resource_mutex);
+        {
+            if(!resoource_ptr)
+            {
+                resource_ptr.reset(new some_resorce;
+            }
+        }
+        resource_ptr->do_smth();
+    }
+}
+```
+* it contains a race conditiion
