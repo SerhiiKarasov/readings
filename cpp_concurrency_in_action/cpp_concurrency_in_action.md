@@ -659,3 +659,8 @@ class X
         }
 }
 ```
+* calling lock() on lock_a, lock_b just calls the member function of the same name. And also they update the flag inside the std::unique_lock instance to indicate that the mutex is currently owned. If it is owned by the instance, the desctructor must call unlock(), and if the instance doesn't own the mutex there should be no call of unlock() in the destructor.
+* there is a slight performance penalty of using the std::unique_lock over std:lock_guard
+
+
+# transfering mutex ownership between scopes
