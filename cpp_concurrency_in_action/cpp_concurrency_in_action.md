@@ -701,3 +701,39 @@ void get_and_process_data()
 }
 ```
 * In general, a lock should be held for only the minimum possible time needed to perform the required operations.
+* This also means that time-consuming operations such as acquiring another lock (even if you know it won’t dead-lock) or waiting for I/O to complete shouldn’t be done under lock, unless it is required
+```
+
+class Y
+{
+private: 
+    int some_detail;
+    mutable std::mutex m;
+
+    int get_detail() const
+    {
+        std::lock_guard<std::mutex> lock_a(m);
+        return some_detail;
+    }
+
+
+public:
+    Y(int sd) : some_detail(sd){};
+
+    friend bool operator==(Y const& lhs, Y const& rhs)
+    {
+        if (&lhs == &rhs)
+        {
+            return true;
+        }
+        int const lhs_value = lhs.get_detail();
+        int const rhs_value = rhs.get_detail();
+        return lhs_value==rhs_value;//as only one lock is hold at a time, we are comparing values that are not guaranteed to be unchanged in between.
+    }
+}
+```
+## alternative facilities for protecting shared data
+* it's not only mutexes :)
+* shared data needs protection only on initialization(e.g. is read only when created
+
+### protecting shared data on init
