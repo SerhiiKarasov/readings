@@ -663,4 +663,41 @@ class X
 * there is a slight performance penalty of using the std::unique_lock over std:lock_guard
 
 
-# transfering mutex ownership between scopes
+### transfering mutex ownership between scopes
+* std::unique_lock do not have to own their mutexes, the ownership of a mutex can be transfered between instances by moving the instances around
+* in some cases such transfer is automatic(return from function), in some cases explicitly via std::move
+* if value is lvalue(real variable or reference, rvalue a temporary value) - ownership transfer is automatic if rvalue, or must be done explicitly if lvalue
+* std::unique_lock is movable, but no copyable
+* one of the usecase: function locks mutex and transfers ownership to the caller
+```
+std::unique_lock<std::mutex> get_lock()
+{
+    extern std::mutex some_mutex;
+    std::unique_lock<std::mutex> lk(some_mutex);
+    prepare_data();
+    return lk;
+}
+
+void process_data()
+{
+    std::unique_lock<std::mutex> lk(get_lock());
+    do_smth();
+}
+
+```
+
+### lock granularity
+* bad idea to hold lock on time consuming operations like IO.
+* holding lock on a data for too long will cause bad performance
+```
+void get_and_process_data()
+{
+    std::unique_lock<std::mutex> my_lock(the_mutex);
+    some_class data_to_process=get_next_data_chunk();
+    my_lock.unlock();
+    result_type result = process(data_to_process);
+    my_lock.lock();
+    write_result(data_to_process, result);
+}
+```
+* In general, a lock should be held for only the minimum possible time needed to perform the required operations.
