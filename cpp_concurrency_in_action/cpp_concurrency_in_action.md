@@ -896,3 +896,68 @@ public:
 *  usage is not recommended
 
 # Synchronizing concurrent operations
+* sometimes need not only to protect data, but to synchronize actions between threads
+* for synchronization we are using condition variables and futures
+
+### Waiting for an event or other condition
+* if one thread is waiting for a second thread to complete a task, it has several options. 
+* First, it could just keep checking a flag in shared data (protected by a mutex) and have the second thread set the flag when it completes the task. This is wasteful on two counts: the thread consumes valuable processing time repeatedly checking the flag, and when the mutex is locked by the waiting thread, it can’t be locked by any other thread.
+* A second option is to have the waiting thread sleep for small periods between the
+checks using the std::this_thread::sleep_for() function
+```
+bool flag; 
+std::mutex m;
+void wait_for_flag()
+{
+    std::unique_lock<std::mutex> lk(m);
+    while(!flag)
+    {
+        lk.unlock();
+        std::this_thread::sleep_for(std;:chrono::milliseconds(100));
+        lk.lock();
+    }
+}
+```
+it is not effective, too short sleep may need a lot of wakeups, too long sleep may notify about the thing finished too lately.
+*The third, and preferred, option is to use the facilities from the C++ Standard Library to wait for the event itself. The most basic mechanism is about waiting for an event to be triggered by another thread is the condition variable. When sme thread has determined that the conditiion is satisfied, it can then notify one or more of the threads waiting on the conditiion.
+### Waiting for a condition with condition variables
+* std::condition_variable, std::condition_variable_any from <condition_variable> library.
+* std::condition_variable, works with mutex -> prefered solution.
+* std::condition_variable_any, works with what is a mutex-like, gives some sort of flexibility
+* example on condition_variable:
+```
+std::mutex mut;
+std::queue<data_chunk> data_queue; // a queue to pass data between threads
+std::conditiion_variable data_cond;
+
+
+void data_preparation_thread()
+{
+    while(more_data_to_prepare)
+    {
+        data_chunk const data = prepare_data();
+        std::lock_guard<std::mutex> lk(mut);
+        data_queue.push(data);
+        data_cond.notify_one();
+    }
+}
+
+void data_processing_thread>()
+{
+    while(true)
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        data_cond.wait(
+            lk, []{return !data_queue.empty();});
+            data_chunk data=data_queue.front();
+            data_queue.pop();
+            lk.unlock();
+            process(data);
+            if(is_last_chunk(data))
+            {
+                break;
+            }
+    }
+}
+```
+### Building a thread-safe queue with condition variables
