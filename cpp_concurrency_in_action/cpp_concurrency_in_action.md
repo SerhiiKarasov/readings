@@ -1,24 +1,39 @@
 # 1.Hello, world of concurrency in C++
+
 ### task switching on single processor system
+
 ### concurrency with multiple processes
- * divide application into multiple, separate single-threaded processes that are run at the same time. 
- * Problem is here to communicate between processes - OS sets some restrictions, so it is slow and complicated. 
- * From another hand it is easier to write concurrent code with processes. You can then move some processes to other machine.
- * c++ standard is does not provide about inter-process communication. hence it is platform specific
+
+- divide application into multiple, separate single-threaded processes that are run at the same time.
+- Problem is here to communicate between processes - OS sets some restrictions, so it is slow and complicated.
+- From another hand it is easier to write concurrent code with processes. You can then move some processes to other machine.
+- c++ standard is does not provide about inter-process communication. hence it is platform specific
+
 ### concurrency with multiple threads
-* because of shared address space and lack of protection of data between threads makes overhead of communication smaller(then in case of processes)
-* harder to write safe code
-* c++ standard is only about inter-thread communication
+
+- because of shared address space and lack of protection of data between threads makes overhead of communication smaller(then in case of processes)
+- harder to write safe code
+- c++ standard is only about inter-thread communication
+
 ### why concurrency
-* separation of concerns
-* performance
-### separation of concerns 
-* split ui from logic 
+
+- separation of concerns
+- performance
+
+### separation of concerns
+
+- split ui from logic
+
 ### performance
-* process data by chunks
+
+- process data by chunks
+
 ### platform-specific facilities
-* native_handle()
+
+- native_handle()
+
 ### hello world
+
 ```
 #include <iostream>
 #include <thread>
@@ -32,11 +47,17 @@ int main()
     t.join();
 }
 ```
+
 # 2.Managing threads
+
 ### std::thread
-* can be launched, can be one to wait it to finish, or one to have it in background
+
+- can be launched, can be one to wait it to finish, or one to have it in background
+
 ### argument
-* requires smth executable
+
+- requires smth executable
+
 ```
 void do_some_work();
 std::thread t(do_some_work);
@@ -45,7 +66,7 @@ std::thread t(do_some_work);
 
 class background_task
 {
-    public: 
+    public:
     void operator() () const
     {
         do_smth1();
@@ -56,13 +77,17 @@ background_task f;
 std::tread my_thread(f);
 
 ```
-* be aware with the syntax
+
+- be aware with the syntax
+
 ```
 // declares function t that takes a single parameter(pointer to function taking zero arguments, return type background_task)
 // returns and std::thread object, instead of launching a new thread
 std::thread t(background_task());
 ```
-correct versions 
+
+correct versions
+
 ```
 std::thread t((background_task()));
 std::thread t{(background_task())};
@@ -71,9 +96,11 @@ std::thread t([] (){
     do_something_else();
 });
 ```
-* thread join -> waiting for its end
-* thread detach -> leave it run on its own
-* you need to be sure that the thread is correctly joined/detached before object lifetime ends
+
+- thread join -> waiting for its end
+- thread detach -> leave it run on its own
+- you need to be sure that the thread is correctly joined/detached before object lifetime ends
+
 ```
 #bad example
 
@@ -116,26 +143,30 @@ int main()
     return 0;
 }
 ```
-* better to copy the data into the thread rather than sharing the data
-* check if objects are not containing pointers and references 
-* bad idea to create thread within the function that has access to local variables, unless thread finishes earlier than function.
+
+- better to copy the data into the thread rather than sharing the data
+- check if objects are not containing pointers and references
+- bad idea to create thread within the function that has access to local variables, unless thread finishes earlier than function.
 
 ### Waiting for the thread to complete
-* join() is bruteforce, if you need more control over thread use condition variables, futures
-* calling join() cleans up storage associated with thread so the std::thread object is no longer associated with the now finished thread. 
-* calling join() makes object no longer joinable, 
-* use joinable()
-  
+
+- join() is bruteforce, if you need more control over thread use condition variables, futures
+- calling join() cleans up storage associated with thread so the std::thread object is no longer associated with the now finished thread.
+- calling join() makes object no longer joinable,
+- use joinable()
+
 ### Waiting in exceptional circumstances
-* be sure that join() or detach() was called before thread object is destroyed
-* problem is when exception between thread started and join() called
-* make sense to cover exception case with join()
-hardcore solution is
+
+- be sure that join() or detach() was called before thread object is destroyed
+- problem is when exception between thread started and join() called
+- make sense to cover exception case with join()
+  hardcore solution is
+
 ```
 struct func();
 void f()
 {
-    int some_local_state = 0; 
+    int some_local_state = 0;
     func my_func(some_local_state);
     std::thread t(my_func);
     try
@@ -150,7 +181,9 @@ void f()
     t.join();
 }
 ```
-smart RAII solution is 
+
+smart RAII solution is
+
 ```
 class thread_guard
 {
@@ -163,7 +196,7 @@ public:
             t.join();
     }
     thread_guard(thread_guard const&)=delete;
-    thread_guard& operator=(thread_guard const&) = delete;    
+    thread_guard& operator=(thread_guard const&) = delete;
 };
 
 struct func;
@@ -178,18 +211,23 @@ void f()
     do_something_in_current_thread();
 }
 ```
+
 ### running thread in background
-* calling detach() on the std::thread leaves thread to run in backgound, no direct means of communication and can't wait for thread to complete. 
+
+- calling detach() on the std::thread leaves thread to run in backgound, no direct means of communication and can't wait for thread to complete.
+
 ```
 std::thread t(do_background_task());
 t.detach();
 assert(!t.joinable());
 ```
-* can't join() after detach()
-* if std::thread is detached, it is impossible to obtain std::thread object
-* detached threads are called daemon threads
-* can't call detach from a std::thread with no associated thread of execution, same for join. I.e. only joinable() threads are detachable.
-* example word editing app, each new document means new thread
+
+- can't join() after detach()
+- if std::thread is detached, it is impossible to obtain std::thread object
+- detached threads are called daemon threads
+- can't call detach from a std::thread with no associated thread of execution, same for join. I.e. only joinable() threads are detachable.
+- example word editing app, each new document means new thread
+
 ```
 void edit_document(std::string const &  filename)
 {
@@ -210,13 +248,18 @@ void edit_document(std::string const &  filename)
     }
 }
 ```
+
 ### passing arguments to a thread function
-* even though  second parameter is std::string, it is passed as char const *, and is converted to std::string in context of new thread
+
+- even though second parameter is std::string, it is passed as char const \*, and is converted to std::string in context of new thread
+
 ```
 void f(int i, std::string const & s);
 std::thread t(f, 3, "3");
 ```
-* risky moment about passing pointer to automatic variable
+
+- risky moment about passing pointer to automatic variable
+
 ```
 void f(int i, std::string const & s);
 void oops(int some_param)
@@ -227,7 +270,9 @@ void oops(int some_param)
     t.detach();
 }
 ```
+
 the correct solution for the problem is cast/dangling pointer, is to perform it before passing to function
+
 ```
 void not_oops(int some_param)
 {
@@ -237,7 +282,9 @@ void not_oops(int some_param)
     t.detach();
 }
 ```
-* vice verse, object is copied, but you wanted a pass via reference
+
+- vice verse, object is copied, but you wanted a pass via reference
+
 ```
 void update_data_for_widget(widget_id w, widget_data& data);
 void oops_again(widget_id w)
@@ -249,29 +296,35 @@ void oops_again(widget_id w)
     process_widget_data(data);
 }
 ```
+
 the correct solution for the problem is using local copy instead of reference, is to wrap it with std::ref
+
 ```
 void update_data_for_widget(widget_id w, widget_data& data);
 std::thread t(update_data_for_widget, w, std::ref(data));//thread constructor will just create an internal copy
 ```
-* passing a member function point as the function
+
+- passing a member function point as the function
+
 ```
 class X
 {
-    public: 
+    public:
     void do_lengthy_work();
 };
 X my_x;
 std::thread t(&X::do_lengthy_work, &my_work);
 ```
+
 this code will invoke my_x.do_lengthy_work() on the new thread, because the address of my_x is supplied as the object pointer. In order to add some argument to the method just add third argument in the thread constructor
 
-
 ### transferring ownership of a thread
-* use case: function creates a background thread but passes back ownership of the new thread to the calling function rather than waiting for it to complete.
-* use std::move of std::thread, thread is only moveable, not copyable
+
+- use case: function creates a background thread but passes back ownership of the new thread to the calling function rather than waiting for it to complete.
+- use std::move of std::thread, thread is only moveable, not copyable
 
 ### hand-made scoped_guard for the thread
+
 ```
 class scoped_thread
 {
@@ -302,19 +355,24 @@ public:
 ```
 
 # 3.sharing data between threads
-* at some point of time of work on the data structures the invariant can be broken, it's better another threads do not access to such intermediate data.
-* e.g. delete a node in a list 1) identify node to delete, 2) change link in previous node to point to the next one 3) change link in next node to point to the previous node 4) delete the node. At point 2-3 we have broken invariants.
-* race condition is anything where outcome depends on the relative ordering of execution of operations on two or more threads.
+
+- at some point of time of work on the data structures the invariant can be broken, it's better another threads do not access to such intermediate data.
+- e.g. delete a node in a list 1) identify node to delete, 2) change link in previous node to point to the next one 3) change link in next node to point to the previous node 4) delete the node. At point 2-3 we have broken invariants.
+- race condition is anything where outcome depends on the relative ordering of execution of operations on two or more threads.
+
 ### avoiding race conditions
-* wrap your code with a protection mechanism to ensure that only the thread actually performing a modification can see the intermediate stats where the invariants are broken.
-* lock-free programming, modification of the data structure/invariant design so that modifications are done as a series of indivisible changes.
-* transaction, modifications of the data structure are performed withing one operation called transaction. There may be transaction log and one step commit. Software transactional memory(STM). C++ doesn't support it, at least in C++20.
+
+- wrap your code with a protection mechanism to ensure that only the thread actually performing a modification can see the intermediate stats where the invariants are broken.
+- lock-free programming, modification of the data structure/invariant design so that modifications are done as a series of indivisible changes.
+- transaction, modifications of the data structure are performed withing one operation called transaction. There may be transaction log and one step commit. Software transactional memory(STM). C++ doesn't support it, at least in C++20.
 
 ### protecting data with mutexes
-* the thread library ensures that once the one thread locked a specific mutex, all other threads that try to lock the same mutex have to wait for the unlock.
-* mutexes can cause deadlock
-* the syntax is: create instance of std::mutex, and call it's member function lock(), at the end call unlock()
-* the RAII solution is to use std::lock_guard
+
+- the thread library ensures that once the one thread locked a specific mutex, all other threads that try to lock the same mutex have to wait for the unlock.
+- mutexes can cause deadlock
+- the syntax is: create instance of std::mutex, and call it's member function lock(), at the end call unlock()
+- the RAII solution is to use std::lock_guard
+
 ```
 #include <list>
 #include <mutex>
@@ -334,13 +392,17 @@ bool list_contains(int value_to_find)
     return std::find(some_list.begin(), some_list.end(), value_to_find) != some_list.end();
 }
 ```
+
 the usage of the same mutex makes list_contains and add_to_list mutually exclusive.
-* the previous example will not work properly if the list would be passed via reference/pointer. Any code that has an access to that pointer or reference can access/modify the protected data without locking the mutex.
+
+- the previous example will not work properly if the list would be passed via reference/pointer. Any code that has an access to that pointer or reference can access/modify the protected data without locking the mutex.
 
 ### structuring code for protecting shared data
-* check that none of the member functions return a pointer or reference to the protected data
-* check that none of the member functions are passing pointers or references to the 'third party' functions.
-* bad use case, it is possible to have written access to the protection data which is not mutually exclusive
+
+- check that none of the member functions return a pointer or reference to the protected data
+- check that none of the member functions are passing pointers or references to the 'third party' functions.
+- bad use case, it is possible to have written access to the protection data which is not mutually exclusive
+
 ```
 classe some_data
 {
@@ -377,9 +439,12 @@ void foo()
     unprotected->do_something();
 }
 ```
+
 ### spotting race conditions inherent in interfaces
-* even having all methods covered with mutex it would not help with the deleting of the node in double linked list, as generally you need to modify 3 nodes. it is necessary to cover with mutex the whole list.
-* example with stack, we can call push(), pop(), top(), empty(), size();
+
+- even having all methods covered with mutex it would not help with the deleting of the node in double linked list, as generally you need to modify 3 nodes. it is necessary to cover with mutex the whole list.
+- example with stack, we can call push(), pop(), top(), empty(), size();
+
 ```
 template<typename T, typename Container=std::deque<T> >
 class stack
@@ -391,7 +456,7 @@ public:
     template <class Alloc> stack(const Container&, const Alloc&);
     template <class Alloc> stack(Container&&, const Alloc&);
     template <class Alloc> stack(stack&&, const Alloc&);
-    
+
     bool empty() const;
     site_t size() const;
     T& top();
@@ -402,8 +467,11 @@ public:
     void swap(stack&&);
 };
 ```
+
 the problem is that size(), empty() cannot be trusted. When they are called they are ok, but once they've returned other threads are free to access the stack and might push(), pop() before the thread that needed size() info is starting its work.
-* in particular if stack instance is not shared, it's safe to check for empty() and then call top(), or top() and then pop()
+
+- in particular if stack instance is not shared, it's safe to check for empty() and then call top(), or top() and then pop()
+
 ```
 stack<int> s;
 if(!s.empty())
@@ -413,16 +481,20 @@ if(!s.empty())
     do_something(value);
 }
 ```
-* the problem is related to the interface, need to change the interface design
-* option 1: pass in a reference. requires constructing object of stack, may be resource hungry. requires type to be assignable. 
+
+- the problem is related to the interface, need to change the interface design
+- option 1: pass in a reference. requires constructing object of stack, may be resource hungry. requires type to be assignable.
+
 ```
 std::vector<int> result;
 some_stack.pop(result);
 ```
-* option 2: require a no-throw copy constructor, or move constructor. Use std::is_nothrow_copy_constructible, std::is_nothrow_move_constructible.
-* option 3: return a point to the popped item.pointers can be copied without throwing. but requires a means of managing the memory allocated and adds some overhead for simple types like int. Good to use std::shared_ptr, is destroyed once the last pointer is destroyed. 
-* option 4: option1 + option2 or option1 + option3
-* example of thread safe stack data structure
+
+- option 2: require a no-throw copy constructor, or move constructor. Use std::is_nothrow_copy_constructible, std::is_nothrow_move_constructible.
+- option 3: return a point to the popped item.pointers can be copied without throwing. but requires a means of managing the memory allocated and adds some overhead for simple types like int. Good to use std::shared_ptr, is destroyed once the last pointer is destroyed.
+- option 4: option1 + option2 or option1 + option3
+- example of thread safe stack data structure
+
 ```
 
 #include <exception>
@@ -438,18 +510,18 @@ struct empty_stack: std::exception
 template <typename T>
 class threadsafe_stack
 {
-private: 
+private:
     std::stack<T> data;
     mutable std::mutex m;
-    
-public: 
+
+public:
     threadsafe_stack(){};
     threadsafe_stack(const threadsafe_stack& other)
     {
         std::lock_guard<std::mutex> lock(other.m);
         data=other.data;//copy performed in constructor body
     }
-    
+
     threadsafe_stack &operator = (const threadsafe_stack&) = delete; //assignment operator is deleted
 
     std::shared_ptr<T> pop()
@@ -460,13 +532,13 @@ public:
         data.pop();
         return res;
     }
-    
+
     void push(T new_value)
     {
         std::lock_guard<std::mutex> lock(m);
         data.push(new_value);
     }
-    
+
     void pop(T& value)
     {
         std::lock_guard<std::mutex> lock(other.m);
@@ -481,24 +553,27 @@ public:
     }
 };
 ```
-* the stack is not assignable, no assignment operator and no swap().
-* the stack is copyable
-* the problem with locking schemes, sometimes you need more than one mutex.but that may lead to deadlocks.
 
-###  deadlock: the problem and solution
-* deadlock example: there are two mutexes. Both mutexes need to be locked to perform the operation. There are two threads, each of them hold one mutex only. Both of the threads are waiting another to unlock its mutex. 
-* the common advice is: always lock the two mutexes in the same order. Sometimes it is straightforward, when both mutexes are serving different purposes. Sometimes it is not, when mutexes are protecting a separate instance of the same class. 
-* solution for taking care of pair of mutexes is to use std::lock. It can lock two or more mutexes at once without a risk of deadlock.
+- the stack is not assignable, no assignment operator and no swap().
+- the stack is copyable
+- the problem with locking schemes, sometimes you need more than one mutex.but that may lead to deadlocks.
+
+### deadlock: the problem and solution
+
+- deadlock example: there are two mutexes. Both mutexes need to be locked to perform the operation. There are two threads, each of them hold one mutex only. Both of the threads are waiting another to unlock its mutex.
+- the common advice is: always lock the two mutexes in the same order. Sometimes it is straightforward, when both mutexes are serving different purposes. Sometimes it is not, when mutexes are protecting a separate instance of the same class.
+- solution for taking care of pair of mutexes is to use std::lock. It can lock two or more mutexes at once without a risk of deadlock.
+
 ```
 class some_big_object;
 void swap(some_big_object& lhs, some_big_object& rhs);
 
 class X
 {
-private: 
+private:
     some_big_object some_detail;
     std::mutex m;
-public: 
+public:
     X(some_big_object const& sd): some_detail(sd){}
     friend void swap(X& lhs, X& rhs)
     {
@@ -511,24 +586,31 @@ public:
     }
 };
 ```
-* the std::lock doesn't help when they are locked separatly
-* the most frequent reason of the deadlock is related to locks. But it is not the only reason.
-* it is possible to deadlock with two threads without any explicit lock by calling join() on the std::thread for the other. In that case neither thread can progress as it wits for the another thread.
-* the solution is to implement the idea, don't wait for a thread if it may wait for your thread
+
+- the std::lock doesn't help when they are locked separatly
+- the most frequent reason of the deadlock is related to locks. But it is not the only reason.
+- it is possible to deadlock with two threads without any explicit lock by calling join() on the std::thread for the other. In that case neither thread can progress as it wits for the another thread.
+- the solution is to implement the idea, don't wait for a thread if it may wait for your thread
+
 ### avoiding nested deadlocks
-* don't acquire lock if you already hold one, if you need several locks use std::lock.
+
+- don't acquire lock if you already hold one, if you need several locks use std::lock.
 
 ### avoiding calling user supplied code while holding a lock
-* that code can acquire locks, hence we may have a problem with nested deadlocks
+
+- that code can acquire locks, hence we may have a problem with nested deadlocks
 
 ### acquire locks in a fixed order
-* if you need to acquire several locks, so then use std::locks to preserve the order of locking
-* in some cases it is not so straightforward, e.g. working on list. When you need to access the list, threads must acquire three nodes 1) the one to delete, 2) node before 3) node after.  But if two threads are traversing same list in reverse orders - we can have a deadlock, cause the nodes maybe locked in different orders. thread 1 will lock N and N+1, while thread 2 will lock N+1 and N. The possible solution in this example to define the order of traversal.
+
+- if you need to acquire several locks, so then use std::locks to preserve the order of locking
+- in some cases it is not so straightforward, e.g. working on list. When you need to access the list, threads must acquire three nodes 1) the one to delete, 2) node before 3) node after. But if two threads are traversing same list in reverse orders - we can have a deadlock, cause the nodes maybe locked in different orders. thread 1 will lock N and N+1, while thread 2 will lock N+1 and N. The possible solution in this example to define the order of traversal.
 
 ### use a lock hierarchy
-* it is a particular case of defining lock ordering.
-* the idea is that you divide the application into layers and identify all the mutexes that may be locked in any given layer. Code will not be permitted to lock the mutex that is already locked in a lower layer. You can check it in a runtime by assigning layer numbers to each mutex and keeping record of which mutex are locked by each thread.
-* example:
+
+- it is a particular case of defining lock ordering.
+- the idea is that you divide the application into layers and identify all the mutexes that may be locked in any given layer. Code will not be permitted to lock the mutex that is already locked in a lower layer. You can check it in a runtime by assigning layer numbers to each mutex and keeping record of which mutex are locked by each thread.
+- example:
+
 ```
 hierarchical_mutex high_level_mutex(10000);// 10k is high level prio
 hierarchical_mutex low_level_mutex(5000); //5k is low level prio
@@ -571,10 +653,12 @@ void thread_b() // disregards the rule
     other_stuff();
 }
 ```
-* deadlock between hierarchical_mutex are impossible, because the mutexes enforce ordering
-* you can't hold two locks at the same time if they are not of the same level.
-* for std::lock_guard<> usability the user defined hierarchical_mutex should implement lock(), unlock(), try_lock();
-* try_lock() if the lock is hold by another thread will return false and will not wait for the another thread to unlock the mutex.
+
+- deadlock between hierarchical_mutex are impossible, because the mutexes enforce ordering
+- you can't hold two locks at the same time if they are not of the same level.
+- for std::lock_guard<> usability the user defined hierarchical_mutex should implement lock(), unlock(), try_lock();
+- try_lock() if the lock is hold by another thread will return false and will not wait for the another thread to unlock the mutex.
+
 ```
 class hierarchical_mutex
 {
@@ -582,7 +666,7 @@ class hierarchical_mutex
     unsigned long const hierarchy_value;
     unsigned long previous_hierarchy_value;
     static thread_local unsigned long this_thread_hierarchy_value;//this is important to have this value that represents the current thread value hierarchy
-    
+
     void check_for_hierarchy_violation()
     {
         if(this_thread_hierarchy_value <= hierarchy_value)//passes successfully for the first time because this_value is ULONG_MAX
@@ -590,7 +674,7 @@ class hierarchical_mutex
             throw std::logic_error("mutex hierarchy was violated");
         }
     }
-    
+
     void update_hierarchy_value()
     {
         previous_hierarchy_value=this_thread_hierarchy_value;
@@ -598,23 +682,23 @@ class hierarchical_mutex
     }
 public:
     explicit hierarchical_mutex(unsigned long value):
-        hierarchy_value(value), 
+        hierarchy_value(value),
         previous_hierarchy_value(0)
     {}
-    
+
     void lock()
     {
         check_for_hierarchy_violation();
         internal_mutex.lock();// with this check, lock delegates to the internal mutex for the actual locking
         update_hierarchy_value();
     }
-    
+
     void unlock()
     {
         this_thread_hierarchy_value=previous_hierarchy_value;
         internal_mutex.unlock();
     }
-    
+
     bool try_unlock()
     {
         check_for_internal_violation();
@@ -629,11 +713,13 @@ thread_local unsigned long hierarchical_mutex::this_thread_hierachical_value(ULO
 //every thread has its own copy, cause it is thread_local
 
 ```
+
 ### std::unique_lock
-* more flexible substitute for std::lock_guard() is std::unique_lock, which is RAII as well
-* doesn't always own the mutex it is associated with
-* can take as a second argument std::adopt_lock to have the lock object manage the lock on a mutex
-* can take as a second argument std::defer_lock to indicate that mutex should be unlocked on construction, the lock can be acquired later, by calling lock()
+
+- more flexible substitute for std::lock_guard() is std::unique_lock, which is RAII as well
+- doesn't always own the mutex it is associated with
+- can take as a second argument std::adopt_lock to have the lock object manage the lock on a mutex
+- can take as a second argument std::defer_lock to indicate that mutex should be unlocked on construction, the lock can be acquired later, by calling lock()
 
 ```
 class some big_object;
@@ -651,24 +737,26 @@ class X
         {
             if(&lhs == &rhs)
                 return;
-            
+
             std::unique_lock<std::mutex> lock_a(lhs.m, std::defer_lock);//std::defer_lock leaves mutexts unlocked
-            std::unique_lock<std::mutex> lock_b(lhs.m, std::defer_lock); 
+            std::unique_lock<std::mutex> lock_b(lhs.m, std::defer_lock);
             std::lock(lock a, lock b); // lock_a/b can be passed cause they provide lock(), try_lock(), unlock()
             swap(lhs.some_detail, rhs.some_detail);
         }
 }
 ```
-* calling lock() on lock_a, lock_b just calls the member function of the same name. And also they update the flag inside the std::unique_lock instance to indicate that the mutex is currently owned. If it is owned by the instance, the desctructor must call unlock(), and if the instance doesn't own the mutex there should be no call of unlock() in the destructor.
-* there is a slight performance penalty of using the std::unique_lock over std:lock_guard
 
+- calling lock() on lock_a, lock_b just calls the member function of the same name. And also they update the flag inside the std::unique_lock instance to indicate that the mutex is currently owned. If it is owned by the instance, the desctructor must call unlock(), and if the instance doesn't own the mutex there should be no call of unlock() in the destructor.
+- there is a slight performance penalty of using the std::unique_lock over std:lock_guard
 
 ### transfering mutex ownership between scopes
-* std::unique_lock do not have to own their mutexes, the ownership of a mutex can be transfered between instances by moving the instances around
-* in some cases such transfer is automatic(return from function), in some cases explicitly via std::move
-* if value is lvalue(real variable or reference, rvalue a temporary value) - ownership transfer is automatic if rvalue, or must be done explicitly if lvalue
-* std::unique_lock is movable, but no copyable
-* one of the usecase: function locks mutex and transfers ownership to the caller
+
+- std::unique_lock do not have to own their mutexes, the ownership of a mutex can be transfered between instances by moving the instances around
+- in some cases such transfer is automatic(return from function), in some cases explicitly via std::move
+- if value is lvalue(real variable or reference, rvalue a temporary value) - ownership transfer is automatic if rvalue, or must be done explicitly if lvalue
+- std::unique_lock is movable, but no copyable
+- one of the usecase: function locks mutex and transfers ownership to the caller
+
 ```
 std::unique_lock<std::mutex> get_lock()
 {
@@ -687,8 +775,10 @@ void process_data()
 ```
 
 ### lock granularity
-* bad idea to hold lock on time consuming operations like IO.
-* holding lock on a data for too long will cause bad performance
+
+- bad idea to hold lock on time consuming operations like IO.
+- holding lock on a data for too long will cause bad performance
+
 ```
 void get_and_process_data()
 {
@@ -700,13 +790,15 @@ void get_and_process_data()
     write_result(data_to_process, result);
 }
 ```
-* In general, a lock should be held for only the minimum possible time needed to perform the required operations.
-* This also means that time-consuming operations such as acquiring another lock (even if you know it won’t dead-lock) or waiting for I/O to complete shouldn’t be done under lock, unless it is required
+
+- In general, a lock should be held for only the minimum possible time needed to perform the required operations.
+- This also means that time-consuming operations such as acquiring another lock (even if you know it won’t dead-lock) or waiting for I/O to complete shouldn’t be done under lock, unless it is required
+
 ```
 
 class Y
 {
-private: 
+private:
     int some_detail;
     mutable std::mutex m;
 
@@ -732,16 +824,20 @@ public:
     }
 }
 ```
+
 ## alternative facilities for protecting shared data
-* it's not only mutexes :)
-* shared data needs protection only on initialization(e.g. is read only when created)
+
+- it's not only mutexes :)
+- shared data needs protection only on initialization(e.g. is read only when created)
 
 ### protecting shared data on init
-* lazy init (each operation that requires the resource first checks to see if it has been initialized and then initializes it before use if not)
-  ```
+
+- lazy init (each operation that requires the resource first checks to see if it has been initialized and then initializes it before use if not)
+
+```
 std::shared_ptr<some_resource> resource_ptr;
 
-void foo()  
+void foo()
 {
     if (!resource_ptr)
     {
@@ -750,12 +846,14 @@ void foo()
     resource_ptr->do_smth();
 }
 ```
-* if shared resource is safe for concurrent access, the only thing to redo is init, this solution is not optimal as it requires serialization of all threads
+
+- if shared resource is safe for concurrent access, the only thing to redo is init, this solution is not optimal as it requires serialization of all threads
+
 ```
 std::shared_ptr<some_resource> resource_ptr;
 std::mutex resorce_mutex;
 
-void foo()  
+void foo()
 {
     std::unique_lock<std::mutex> lk(resource_mutex); // all threads are serialized here
     if (!resource_ptr)
@@ -766,13 +864,15 @@ void foo()
     resource_ptr->do_smth();
 }
 ```
-* one not good solution is Double-Checked Locking pattern.   the pointer is first read without acquiring the lock B (in the code below), and the lock is acquired only  if the pointer is NULL. The pointer is then checked again once the lock has been acquired c (hence the double-checked part) in case another thread has done the initialization between the first check and this thread acquiring the lock
+
+- one not good solution is Double-Checked Locking pattern. the pointer is first read without acquiring the lock B (in the code below), and the lock is acquired only if the pointer is NULL. The pointer is then checked again once the lock has been acquired c (hence the double-checked part) in case another thread has done the initialization between the first check and this thread acquiring the lock
+
 ```
 void undefined_behaviour_with_double_checked_locking()
 {
     if(!resource_ptr) //is not syncronized with the write done by other thread
     {
-        std::lock_guard<std::mutex> lk(resource_mutex); 
+        std::lock_guard<std::mutex> lk(resource_mutex);
         {
             if(!resoource_ptr)
             {
@@ -783,8 +883,10 @@ void undefined_behaviour_with_double_checked_locking()
     }
 }
 ```
-* it contains a race conditiion the thread may see the pointer written by another thread but not see the instance of new some_resource, do_smth() maybe called on wrong data
-* as a solution it was added in c++ std::once_flag, std::call_once, instead of locking the mutexes and explicitly checking the pointer, every threead can just use std::call_once, the pointer would be initialized by some thread when call_once returns. Call_once has a lower overhead that using mutexes explicitly.
+
+- it contains a race conditiion the thread may see the pointer written by another thread but not see the instance of new some_resource, do_smth() maybe called on wrong data
+- as a solution it was added in c++ std::once_flag, std::call_once, instead of locking the mutexes and explicitly checking the pointer, every threead can just use std::call_once, the pointer would be initialized by some thread when call_once returns. Call_once has a lower overhead that using mutexes explicitly.
+
 ```
 std::shared_ptr<some_resource> resource_ptr;
 std::once_flag resource_flag;
@@ -800,7 +902,7 @@ void foo()
 }
 ```
 
-* thread safe initialization of a class memeber using std::call_once
+- thread safe initialization of a class memeber using std::call_once
 
 ```
 class X
@@ -833,10 +935,12 @@ public:
  }
 }
 ```
-* here init would be done either in send_data, or receive_data.
-* before c++11, when local variable is static. The init of such variable is defined to occure the first time control passes through its declaration. before c++11, some threads may already started to use the static variable, but before the first thread finished working with it. Multiple threads may belive that they are first.
-* in c++11 the init will be happended on one thread, and no other threads would proceeed  until init is complete.
-* alternative to std::call_once
+
+- here init would be done either in send_data, or receive_data.
+- before c++11, when local variable is static. The init of such variable is defined to occure the first time control passes through its declaration. before c++11, some threads may already started to use the static variable, but before the first thread finished working with it. Multiple threads may belive that they are first.
+- in c++11 the init will be happended on one thread, and no other threads would proceeed until init is complete.
+- alternative to std::call_once
+
 ```
 class my_class;
 my_class& get_my_class_intstance()
@@ -847,19 +951,22 @@ my_class& get_my_class_intstance()
 ```
 
 ### protecting rarely updated data structures
-* reader-writer mutex allows for two different kinds of usage: write by one thread, read by many.c++ out of box do not provide it. at least in c++11/14
-* std::shared_mutex in c++17 or boost::shared_mutex
+
+- reader-writer mutex allows for two different kinds of usage: write by one thread, read by many.c++ out of box do not provide it. at least in c++11/14
+- std::shared_mutex in c++17 or boost::shared_mutex
 
 ```
 // may be used for locking in place of corresponding std::mutex
-std::local_guard<std::shared_mutex> 
+std::local_guard<std::shared_mutex>
 std::unique_lock<std::shared_mutex>
 
 //those threads that do not update data
 std::shared_lock<std::shared_mutex>
 ```
-* The only constraint is that if any thread has a shared lock, a thread that tries to acquire an exclusive lock will block until all other threads have relinquished their locks, and likewise if any thread has an exclusive lock, no other thread may acquire a shared or exclusive lock until the first thread has relinquished its lock.
-* dns cache example(rare updatable structure
+
+- The only constraint is that if any thread has a shared lock, a thread that tries to acquire an exclusive lock will block until all other threads have relinquished their locks, and likewise if any thread has an exclusive lock, no other thread may acquire a shared or exclusive lock until the first thread has relinquished its lock.
+- dns cache example(rare updatable structure
+
 ```
 #include <map>
 #include <string>
@@ -872,7 +979,7 @@ class dns_cache
 {
     std::map<std::string, dns_entry> entries;
     mutable std::shared_mutex entry_mutex;
-public: 
+public:
     dns_entry find_entry(std::string const & domain) const
     {
         std::shared_lock<std::shared_mutex> lk(entry_mutex);//aka read only access
@@ -889,23 +996,27 @@ public:
 ```
 
 ### recursive locking
-* With std::mutex, it’s an error for a thread to try to lock a mutex it already owns, and attempting to do so will result in undefined behavior.
-* but that is possible with std::recursive_mutex
-*  It works just like std::mutex, except that you can acquire multiple locks on a single instance from the same thread.
-*  You must release all your locks before the mutex can be locked by another thread, so if you call lock() three times, you must also call unlock() three times. Correct use of std::lock_guard <std::recursive_mutex> and std::unique_lock<std::recursive_mutex> will handle this for you.
-*  usage is not recommended
+
+- With std::mutex, it’s an error for a thread to try to lock a mutex it already owns, and attempting to do so will result in undefined behavior.
+- but that is possible with std::recursive_mutex
+- It works just like std::mutex, except that you can acquire multiple locks on a single instance from the same thread.
+- You must release all your locks before the mutex can be locked by another thread, so if you call lock() three times, you must also call unlock() three times. Correct use of std::lock_guard <std::recursive_mutex> and std::unique_lock<std::recursive_mutex> will handle this for you.
+- usage is not recommended
 
 # Synchronizing concurrent operations
-* sometimes need not only to protect data, but to synchronize actions between threads
-* for synchronization we are using condition variables and futures
+
+- sometimes need not only to protect data, but to synchronize actions between threads
+- for synchronization we are using condition variables and futures
 
 ### Waiting for an event or other condition
-* if one thread is waiting for a second thread to complete a task, it has several options. 
-* First, it could just keep checking a flag in shared data (protected by a mutex) and have the second thread set the flag when it completes the task. This is wasteful on two counts: the thread consumes valuable processing time repeatedly checking the flag, and when the mutex is locked by the waiting thread, it can’t be locked by any other thread.
-* A second option is to have the waiting thread sleep for small periods between the
-checks using the std::this_thread::sleep_for() function
+
+- if one thread is waiting for a second thread to complete a task, it has several options.
+- First, it could just keep checking a flag in shared data (protected by a mutex) and have the second thread set the flag when it completes the task. This is wasteful on two counts: the thread consumes valuable processing time repeatedly checking the flag, and when the mutex is locked by the waiting thread, it can’t be locked by any other thread.
+- A second option is to have the waiting thread sleep for small periods between the
+  checks using the std::this_thread::sleep_for() function
+
 ```
-bool flag; 
+bool flag;
 std::mutex m;
 void wait_for_flag()
 {
@@ -918,13 +1029,17 @@ void wait_for_flag()
     }
 }
 ```
+
 it is not effective, too short sleep may need a lot of wakeups, too long sleep may notify about the thing finished too lately.
-*The third, and preferred, option is to use the facilities from the C++ Standard Library to wait for the event itself. The most basic mechanism is about waiting for an event to be triggered by another thread is the condition variable. When sme thread has determined that the conditiion is satisfied, it can then notify one or more of the threads waiting on the conditiion.
+\*The third, and preferred, option is to use the facilities from the C++ Standard Library to wait for the event itself. The most basic mechanism is about waiting for an event to be triggered by another thread is the condition variable. When sme thread has determined that the conditiion is satisfied, it can then notify one or more of the threads waiting on the conditiion.
+
 ### Waiting for a condition with condition variables
-* std::condition_variable, std::condition_variable_any from <condition_variable> library.
-* std::condition_variable, works with mutex -> prefered solution.
-* std::condition_variable_any, works with what is a mutex-like, gives some sort of flexibility
-* example on condition_variable:
+
+- std::condition_variable, std::condition_variable_any from <condition_variable> library.
+- std::condition_variable, works with mutex -> prefered solution.
+- std::condition_variable_any, works with what is a mutex-like, gives some sort of flexibility
+- example on condition_variable:
+
 ```
 std::mutex mut;
 std::queue<data_chunk> data_queue; // a queue to pass data between threads
@@ -960,4 +1075,5 @@ void data_processing_thread>()
     }
 }
 ```
+
 ### Building a thread-safe queue with condition variables
