@@ -1077,3 +1077,47 @@ void data_processing_thread>()
 ```
 
 ### Building a thread-safe queue with condition variables
+*  operations requireed for the queue. inspired by the std::string
+*  this is non thread safe
+```
+template <class T, classs Container = std::deque<T> >
+class queue{
+public:
+    explicit queue(const Container&);
+    explicit queue(Container&& = Container());
+    template <class Alloc> explicit queue(const Alloc&);
+    template <class Alloc> queue(const Container&, const Alloc&);
+    template <class Alloc> queue(Container&&, const Alloc&);
+    template <class Alloc> queue(queue&&, const Alloc&);
+    void swap(queue& q);
+    bool empty() const;
+    size_type size() const;
+    T& front();
+    const T& front() const;
+    T& back();
+    const T& back() const;
+    void push(const T& x);
+    void push(T&& x);
+    void pop();
+    template <class... Args> void emplace(Args&&... args);
+};
+```
+* here we have same stuff as some time before, front and pop should not be separate
+* threadsafe queue example
+```
+template<typename T>
+class threadsafe_queue
+{
+public:
+    threadsafe_queue();
+    threadsafe_queue(const threadsafe_queue&);
+    threadsafe_queue& operator=(
+    const threadsafe_queue&) = delete;
+    void push(T new_value);
+    bool try_pop(T& value);
+    std::shared_ptr<T> try_pop();
+    void wait_and_pop(T& value);
+    std::shared_ptr<T> wait_and_pop();
+    bool empty() const;
+};
+ ```
