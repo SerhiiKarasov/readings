@@ -734,7 +734,7 @@ public:
 ```
 ## alternative facilities for protecting shared data
 * it's not only mutexes :)
-* shared data needs protection only on initialization(e.g. is read only when created
+* shared data needs protection only on initialization(e.g. is read only when created)
 
 ### protecting shared data on init
 * lazy init (each operation that requires the resource first checks to see if it has been initialized and then initializes it before use if not)
@@ -750,7 +750,7 @@ void foo()
     resource_ptr->do_smth();
 }
 ```
-* if shared resource is safe for concurrent access, the only thing to redo is init, this solution is not optimal as it requires serealization of all threads
+* if shared resource is safe for concurrent access, the only thing to redo is init, this solution is not optimal as it requires serialization of all threads
 ```
 std::shared_ptr<some_resource> resource_ptr;
 std::mutex resorce_mutex;
@@ -768,19 +768,131 @@ void foo()
 ```
 * one not good solution is Double-Checked Locking pattern.   the pointer is first read without acquiring the lock B (in the code below), and the lock is acquired only  if the pointer is NULL. The pointer is then checked again once the lock has been acquired c (hence the double-checked part) in case another thread has done the initialization between the first check and this thread acquiring the lock
 ```
-void undefined_behaviour_with_double_checked_logic()
+void undefined_behaviour_with_double_checked_locking()
 {
-    if(!resource_ptr)
+    if(!resource_ptr) //is not syncronized with the write done by other thread
     {
-        std::lock_guard<std::mutex> lk(resource_mutex);
+        std::lock_guard<std::mutex> lk(resource_mutex); 
         {
             if(!resoource_ptr)
             {
-                resource_ptr.reset(new some_resorce;
+                resource_ptr.reset(new some_resorce);
             }
         }
         resource_ptr->do_smth();
     }
 }
 ```
-* it contains a race conditiion
+* it contains a race conditiion the thread may see the pointer written by another thread but not see the instance of new some_resource, do_smth() maybe called on wrong data
+* as a solution it was added in c++ std::once_flag, std::call_once, instead of locking the mutexes and explicitly checking the pointer, every threead can just use std::call_once, the pointer would be initialized by some thread when call_once returns. Call_once has a lower overhead that using mutexes explicitly.
+```
+std::shared_ptr<some_resource> resource_ptr;
+std::once_flag resource_flag;
+
+void init_resource()
+{
+    resource_ptr.reset(new some_resource);
+}
+void foo()
+{
+    std::call_once(resource_flag, init_resource); //inti is called only once
+    resource_ptr->do_smth();
+}
+```
+
+* thread safe initialization of a class memeber using std::call_once
+
+```
+class X
+{
+    private:
+     connection_info connection_details;
+     connection_handle connection;
+     std::once_flag connection_init_flag;
+
+     void open_connection()
+     {
+         connection - connection_manager.open(connection_details);
+     }
+
+public:
+ X(connection_info const & connection_details_):
+ connection_details(connection_details_)
+ {}
+
+ void send_data(data_packet const& data)
+ {
+     std::call_once(connection_init_flag, &X::open_connection, this);
+     connection.send_data(data);
+ }
+
+ data_packet receive_data()
+ {
+     std::call_once(connection_init_flag, &X::open_connection, this);
+     return connection.receive_data();
+ }
+}
+```
+* here init would be done either in send_data, or receive_data.
+* before c++11, when local variable is static. The init of such variable is defined to occure the first time control passes through its declaration. before c++11, some threads may already started to use the static variable, but before the first thread finished working with it. Multiple threads may belive that they are first.
+* in c++11 the init will be happended on one thread, and no other threads would proceeed  until init is complete.
+* alternative to std::call_once
+```
+class my_class;
+my_class& get_my_class_intstance()
+{
+    static my_class instance;
+    return instance; //the init is guaranteed to be thread safe
+}
+```
+
+### protecting rarely updated data structures
+* reader-writer mutex allows for two different kinds of usage: write by one thread, read by many.c++ out of box do not provide it. at least in c++11/14
+* std::shared_mutex in c++17 or boost::shared_mutex
+
+```
+// may be used for locking in place of corresponding std::mutex
+std::local_guard<std::shared_mutex> 
+std::unique_lock<std::shared_mutex>
+
+//those threads that do not update data
+std::shared_lock<std::shared_mutex>
+```
+* The only constraint is that if any thread has a shared lock, a thread that tries to acquire an exclusive lock will block until all other threads have relinquished their locks, and likewise if any thread has an exclusive lock, no other thread may acquire a shared or exclusive lock until the first thread has relinquished its lock.
+* dns cache example(rare updatable structure
+```
+#include <map>
+#include <string>
+#include <mutex>
+#include <shared_mutex>
+
+class dns_entry;
+
+class dns_cache
+{
+    std::map<std::string, dns_entry> entries;
+    mutable std::shared_mutex entry_mutex;
+public: 
+    dns_entry find_entry(std::string const & domain) const
+    {
+        std::shared_lock<std::shared_mutex> lk(entry_mutex);//aka read only access
+        std::map<std::string, dns_entry> :: const_interator const it = entries.find(domain);
+        return (it==entries.end())?dns_entry():it->second;
+    }
+
+    void update_or_add_entry(std::string const &domain, dns_entry const & dns_details)
+    {
+        std::lock_guard<std::shared_mutex> lk(entry_mutex; //aka write access
+        entries[domain] = dns_details;
+    }
+};
+```
+
+### recursive locking
+* With std::mutex, it’s an error for a thread to try to lock a mutex it already owns, and attempting to do so will result in undefined behavior.
+* but that is possible with std::recursive_mutex
+*  It works just like std::mutex, except that you can acquire multiple locks on a single instance from the same thread.
+*  You must release all your locks before the mutex can be locked by another thread, so if you call lock() three times, you must also call unlock() three times. Correct use of std::lock_guard <std::recursive_mutex> and std::unique_lock<std::recursive_mutex> will handle this for you.
+*  usage is not recommended
+
+# Synchronizing concurrent operations
