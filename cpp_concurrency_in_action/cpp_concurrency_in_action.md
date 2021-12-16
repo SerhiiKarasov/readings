@@ -1077,8 +1077,10 @@ void data_processing_thread>()
 ```
 
 ### Building a thread-safe queue with condition variables
-*  operations requireed for the queue. inspired by the std::string
-*  this is non thread safe
+
+- operations requireed for the queue. inspired by the std::string
+- this is non thread safe
+
 ```
 template <class T, classs Container = std::deque<T> >
 class queue{
@@ -1102,22 +1104,257 @@ public:
     template <class... Args> void emplace(Args&&... args);
 };
 ```
-* here we have same stuff as some time before, front and pop should not be separate
-* threadsafe queue example
+
+- here we have same stuff as some time before, front and pop should not be separate
+- threadsafe queue example
+
 ```
 template<typename T>
 class threadsafe_queue
 {
+private:
+    mutable std::mutex mut; //mutex locking is a mutating operation, so in order const method to lock, this mutex is marked as mutable
+    std::queue<T> data_queue;
+    std::condition_variable data_cond;
 public:
-    threadsafe_queue();
-    threadsafe_queue(const threadsafe_queue&);
-    threadsafe_queue& operator=(
-    const threadsafe_queue&) = delete;
-    void push(T new_value);
-    bool try_pop(T& value);
-    std::shared_ptr<T> try_pop();
+    threadsafe_queue(){};
+
+    threadsafe_queue(threadsafe_queue const& other)
+    {
+        std::lock_guard<std::mutex> lk(other.mut);
+        data_queue=other.data_queue;
+    }
+
+    threadsafe_queue& operator= (const threadsafe_queue&) = delete;
+
+    void push(T new_value)
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        data_queue.push(new_value);
+        data_cond.notify_one();
+    }
+
+    bool try_pop(T& value)
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        if(data_queue.empty())
+        {
+            return false;
+        }
+        value=data_queue.front();
+        data_queue.pop();
+        return true;
+    }
+
+    std::shared_ptr<T> try_pop()
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        if(data_queue.empty())
+        {
+            return std::shared_ptr<T>();
+        }
+        std::shared_ptr<T> res(std::make_shared<T>(data_queue.front()));
+        data_queue.pop();
+        return res;
+    }
+
     void wait_and_pop(T& value);
-    std::shared_ptr<T> wait_and_pop();
-    bool empty() const;
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        data_cond.wait(lk,[this]{return !data_queue.empty();});
+        value=data_queue.front();
+        data_queue.pop();
+    }
+
+    std::shared_ptr<T> wait_and_pop()
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        data_cond.wait(lk,[this]{return !data_queue.empty();});
+        std::shared_ptr<T> res(std::make_shared<T>(data_queue.front()));
+        data_queue.pop();
+        return res;
+    }
+
+    bool empty() const
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        return data_queue.empty();
+    }
 };
- ```
+
+// usage
+threadsafe_queue<data_chunk> data_queue;
+ void data_preparation_thread()
+{
+    while(more_data_to_prepare())
+    {
+        data_chunk const data=prepare_data();
+        data_queue.push(data);
+    }
+}
+
+
+void data_processing_thread()
+{
+    while(true)
+    {
+        data_chunk data;
+        data_queue.wait_and_pop(data);
+        process(data);
+        if(is_last_chunk(data))
+        {
+            break;
+        }
+    }
+}
+```
+
+- Condition variables are also useful where there’s more than one thread waiting for the same event.
+
+### Waiting for one-off events with futures
+
+- There are two sorts of futures in the C++ Standard Library, implemented as two class templates declared in the <future> library header
+- unique futures (std::future<>) . An instance of std::future is the one and only instance that refers to its associated event.
+- shared futures (std::shared_future<>). multiple instances of std::shared_future may refer to the same event.
+- The std:future<void>,std::shared_future<void> template specializations should be used where there’s no associated data.
+
+### Returning values from background tasks
+
+- You use std::async to start an asynchronous task for which you don’t need the result right away. Rather than giving you back a std::thread object to wait on,
+  std::async returns a std::future object, which will eventually hold the return value of the function. When you need the value, you just call get() on the future, and the thread blocks until the future is ready and then returns the value.
+
+```
+#include <future>
+#include <iostream>
+
+int find_the_answer_to_ltuae();
+void do_other_stuff();
+int main()
+{
+    std::future<int> the_answer = std::async(find_the_answer_to_ltuae);
+    do_other_stuff();
+    std::cout << "the answer is " << the_answer.get() << std::endl;
+}
+```
+
+- By default, it’s up to the implementation whether std::async starts a new thread, or whether the task runs synchronously when the future is waited for.
+  This can be controlled by the parameter std::lauch.
+- the parameter can be std::launch::deferred to indicate the function to be deferred untill wait(), get() is called on the future
+- std::launch::async to indicate that the function must be run on its own thread
+
+```
+auto f6=std::async(std::launch::async,Y(),1.2);
+auto f7=std::async(std::launch::deferred,baz,std::ref(x));
+auto f8=std::async(std::launch::deferred | std::launch::async,baz,std::ref(x));
+auto f9=std::async(baz,std::ref(x));
+f7.wait();
+```
+
+### Associating a task with a future
+
+- std::packaged_task<> ties a future to a function or callable object. When the std:: packaged_task<> object is invoked, it calls the associated function or callable object and makes the future ready, with the return value stored as the associated data.
+
+### PASSING TASKS BETWEEN THREADS
+
+```
+#include
+#include
+#include
+#include
+#include
+<deque>
+<mutex>
+<future>
+<thread>
+<utility>
+std::mutex m;
+std::deque<std::packaged_task<void()> > tasks;
+boolvoidgui_shutdown_message_received();
+get_and_process_gui_message();
+
+void gui_thread()
+{
+    while(!gui_shutdown_message_received())
+    {
+        get_and_process_gui_message();
+        std::packaged_task<void()> task;
+        {
+            std::lock_guard<std::mutex> lk(m);
+            if(tasks.empty())
+                continue;
+            task=std::move(tasks.front());
+            tasks.pop_front();
+        }
+        task();
+    }
+}
+```
+
+- the GUI thread loops until a message has been received telling the GUI to shut down, repeatedly polling for GUI messages to handle, such as user clicks, and for tasks on the task queue. If there are no tasks on the queue, it loops again; otherwise, it extracts the task from the queue, releases the lock on the queue, and then runs the task g. The future associated with the task will then be made ready when the task completes.
+
+### Making (std::)promises
+
+- std::promise<T> provides a means of setting a value (of type T), which can later be read through an associated std::future<T> object.
+
+```
+#include <future>
+void process_connections(connection_set& connections)
+{
+    while(!done(connections))
+    {
+        for(connection_iterator connection=connections.begin(),end=connections.end();connection!=end;++connection)
+        {
+        if(connection->has_incoming_data())
+        {
+            data_packet data=connection->incoming();
+            std::promise<payload_type>& p= connection->get_promise(data.id); p.set_value(data.payload); }
+            if(connection->has_outgoing_data())
+            {
+                outgoing_packet data=
+                connection->top_of_outgoing_queue();
+                connection->send(data.payload);
+                data.promise.set_value(true);
+
+            }
+        }
+    }
+}
+```
+
+### Saving an exception for the future
+
+```
+double square_root(double x)
+{
+    if(x<0)
+    {
+        throw std::out_of_range(“x<0”);
+    }
+    return sqrt(x);
+}
+
+std::future<double> f=std::async(square_root,-1);
+double y=f.get();
+```
+
+- if the function call invoked as part of std::async throws an exception, that exception is stored in the future in place of a stored value, the future becomes ready, and a call to get() rethrows that stored exception.
+- Note: the standard leaves it unspecified whether it is the original exception object that’s rethrown or a copy;
+- Naturally, std::promise provides the same facility, with an explicit function call. If you wish to store an exception rather than a value, you call the set_exception() member function rather than set_value().
+
+```
+extern std::promise<double> some_promise;
+try
+{
+    some_promise.set_value(calculate_value());
+}
+catch(...)
+{
+    some_promise.set_exception(std::current_exception());
+}
+```
+
+- This uses std::current_exception() to retrieve the thrown exception; the alternative here would be to use std::copy_exception() to store a new exception directly without throwing:
+
+```
+some_promise.set_exception(std::copy_exception(std::logic_error("foo ")));
+```
