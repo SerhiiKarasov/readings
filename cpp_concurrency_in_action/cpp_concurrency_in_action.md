@@ -1358,3 +1358,9 @@ catch(...)
 ```
 some_promise.set_exception(std::copy_exception(std::logic_error("foo ")));
 ```
+* If you need to wait for the same event from more than one thread, you need to use std::shared_future
+
+### Waiting from multiple threads
+* If you access a single std::future object from multiple threads without additional synchronization, you have a data race and undefined behavior. 
+
+### Waiting with a time limit
