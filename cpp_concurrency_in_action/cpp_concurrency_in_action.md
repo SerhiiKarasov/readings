@@ -1364,3 +1364,80 @@ some_promise.set_exception(std::copy_exception(std::logic_error("foo ")));
 * If you access a single std::future object from multiple threads without additional synchronization, you have a data race and undefined behavior. 
 
 ### Waiting with a time limit
+* There are two sorts of timeouts you may wish to specify: a duration-based timeout, where you wait for a specific amount of time (for example, 30 milliseconds), or an absolute timeout, where you wait until a specific point in time (for example, 17:30:15.045987023 UTC on November 30, 2011)
+* std::condition_variable has two overloads of the wait_for() and two overloads of the wait_until()
+* current time is: std::chrono::system_clock::now()
+* If a clock ticks at a uniform rate (whether or not that rate matches the period) and can’t be adjusted, the clock is said to be a steady clock.
+* The is_steady static data member of the clock class is true if the clock is steady and false otherwise.
+* std::chrono::system_clock will not be steady, because the clock can be adjusted
+
+### Durations
+* Durations are the simplest part of the time support; they’re handled by the std::chrono::duration<> class template
+* The first template parameter is the type of the representation (such as int, long, or double)
+* the second is a fraction specifying how many seconds each unit of the duration represents
+* Explicit conversions can be done with std::chrono::duration_cast<>
+* example of wait basing on duration
+```
+std::future<int> f = std::async(some_task);
+if(f.wait_for(std::chrono::milliseconds(35)) == std::future_status::ready )
+{
+    do_something_with(f.get());
+}
+```
+
+### Time points
+* The time point for a clock is represented by an instance of the std::chrono::time_point<> class template, which specifies which clock it refers to as the first template parameter and the units of measurement (a specialization of std::chrono::duration<>) as the second template parameter. 
+* The value of a time point is the length of time (in multiples of the specified duration) since a specific point in time called the epoch of the clock.
+* Typical epochs include 00:00 on January 1, 1970and the instant when the computer running the application booted up
+* Although you can’t find out when the epoch is, you can get the time_since_epoch() for a given time_point.
+* You can also subtract one time point from another that shares the same clock. The result is a duration specifying the length of time between the two time points. 
+```
+auto start  = std::chrono::high_resolution_clock::now();
+do_something();
+auto stop = std::chrono::high_resolution_clock::now();
+std::cout << "do_something() took :" << std::chrono::duration<double, std::chrono::seconds> (stop - start).count() << " seconds." << std::endl;
+```
+
+###  Waiting for a condition variable with a timeout
+```
+#include <condition_variable>
+#include <mutex>
+#include <chrono>
+
+std::condition_variable cv;
+bool done;
+std::mutex m;
+
+bool wait_loop()
+{
+    auto const timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(500);
+    std::unique_lock<std::mutex> lk(m);
+    while(!done)
+    {
+        if(cv.wait_until(lk, timeout) == std::cv_status::timeout)
+            break;
+    }
+    return done;
+
+}
+```
+* This is the recommended way to wait for condition variables with a time limit, if you’re not passing a predicate to the wait. 
+
+### Functions that accept timeouts
+* table of functions
+
+|class/namespace|functions|return value  |
+|---|---|---|
+|std::this_thread  | sleep_for(duration), sleep_untill(time_point))   | N/A  |
+|std::condition_variable, std::condition_variable_any   | wait_for(lock, duration), wait_until(lock, time_point)   | std::cv_status::timeout, std::cv_status::no_timeout |
+|   |wait_for(lock,duration,predicate)wait_until(lock,time_point,predicate)   | bool |
+|std::timed_mutex,std::recursive_timed_mutex|try_lock_for(duration)try_lock_until(time_point)|bool|
+|std::unique_lock<TimedLockable>|unique_lock(lockable,duration)unique_lock(lockable,time_point)|   |
+|   |try_lock_for(duration)try_lock_until(time_point)|bool—true if the lock was acquired, false otherwise|
+|std::future<ValueType> orstd::shared_future<ValueType>|wait_for(duration)wait_until(time_point)|std::future_status::timeout if the wait timedout, std::future_status::ready if the future is ready|
+
+* The simplest use for a timeout is to add a delay to the processing of a particular thread, so that it doesn’t take processing time away from other threads when it has nothing to do
+*  std::this_thread::sleep_for() and std::this_thread::sleep_until()
+*  std::timed_mutex supports timeouts
+*  std::recursive_timed_mutex supports timeouts
+*  std::try_lock_for() and try_lock_until() 
